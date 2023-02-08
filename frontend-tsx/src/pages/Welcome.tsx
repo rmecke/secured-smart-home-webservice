@@ -15,7 +15,7 @@ const Welcome = () => {
 
     const lightOn = async (e: any) => {
         try {
-            await axios.get(ENDPOINT_OFF); 
+            await axios.get(ENDPOINT_ON); 
         } catch (err) {
             console.log(err);
         }        
