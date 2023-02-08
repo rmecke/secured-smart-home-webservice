@@ -37,7 +37,7 @@ services:
       - wireguard
     network_mode: container:webservice-wireguard
   frontend:
-    build: ./frontend
+    build: ./frontend-tsx
     container_name: webservice-frontend
     ports:
       - 3000:3000
