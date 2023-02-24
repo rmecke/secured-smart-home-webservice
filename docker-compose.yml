@@ -15,8 +15,8 @@ services:
       - PEERS=3 #optional
       - PEERDNS=auto #optional
       - INTERNAL_SUBNET=10.13.13.0 #optional
-      - ALLOWEDIPS=0.0.0.0/0, 192.168.0.0/24 #optional
-      - PERSISTENTKEEPALIVE_PEERS= #optional
+      - ALLOWEDIPS=0.0.0.0/0 #optional
+      - PERSISTENTKEEPALIVE_PEERS=25 #optional
       - LOG_CONFS=true #optional
     volumes:
       - ./vpn_config:/config
@@ -24,6 +24,7 @@ services:
     ports:
       - 51820:51820/udp
       - 54000:54000
+      #- 3000:3000
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
       - net.ipv4.ip_forward=1
@@ -39,5 +40,6 @@ services:
   frontend:
     build: ./frontend
     container_name: webservice-frontend
-    ports:
-      - 3000:3000
+    depends_on:
+      - wireguard
+    network_mode: container:webservice-wireguard
