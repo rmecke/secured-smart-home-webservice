@@ -7,7 +7,8 @@ import {
   faBreadSlice,
   faSnowflake,
   faSun,
-  faFan
+  faFan,
+  faFlask
 } from "@fortawesome/free-solid-svg-icons";
 
 export default {
@@ -19,5 +20,6 @@ export default {
   faBreadSlice,
   faSnowflake,
   faSun,
-  faFan
+  faFan,
+  faFlask
 };

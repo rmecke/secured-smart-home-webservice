@@ -1,0 +1,11 @@
+{
+  "devices": {
+    "3911949131": {
+      "name": "Lights",
+      "switch": true,
+      "icon":"",
+      "controls": null,
+      "datapoint": "mqtt.0.test.esp"
+    }
+  }
+}
