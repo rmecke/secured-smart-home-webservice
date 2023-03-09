@@ -4,8 +4,39 @@
       "name": "Lights",
       "switch": true,
       "icon":"",
-      "controls": null,
-      "datapoint": "mqtt.0.test.esp"
+      "datapoint": "mqtt.0.test.switch",
+      "controls": {
+        "2612871503": {
+          "name": "Intensity",
+          "type": "scale",
+          "datapoint": "mqtt.0.test.intensity",
+          "value": 20,
+          "min": 0,
+          "max": 100,
+          "step": 10
+        },
+        "6560479562": {
+          "name": "Color",
+          "type": "mode",
+          "datapoint": "mqtt.0.test.color",
+          "value": "red",
+          "options": {
+            "red": {
+              "name": "Red",
+              "icon": ""
+            },
+            "green": {
+              "name": "Green",
+              "icon": ""
+            },
+            "blue": {
+              "name": "Blue",
+              "icon": ""
+            }
+          }
+        }
+        
+      }
     }
   }
 }
