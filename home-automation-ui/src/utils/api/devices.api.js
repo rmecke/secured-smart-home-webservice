@@ -19,7 +19,6 @@ export const toggleDeviceSwitchApi = async deviceId => {
   )
   .then(function (response) {
     // handle success
-    console.log(response);
     responseFurther = {
       data: {
         deviceId
@@ -30,20 +29,35 @@ export const toggleDeviceSwitchApi = async deviceId => {
     // handle error
     console.log(error);
   });
-
-  console.log(responseFurther);
-
-  
   
   return new Promise((resolve, reject) => resolve(responseFurther));
 };
 
-export const updateDeviceControlValueApi = payload => {
-  // This would be a PATCH request for an actual server
-  const response = {
-    data: {
+export const updateDeviceControlValueApi = async payload => {
+  let responseFurther;
+
+  await axios.patch(`/update`,
+    {
       control: payload
+    },
+    {
+      headers:{
+        'Content-type': 'application/json'
+      }
     }
-  };
-  return new Promise((resolve, reject) => resolve(response));
+  )
+  .then(function (response) {
+    // handle success
+    responseFurther = {
+      data: {
+        control: payload
+      }
+    };
+  })
+  .catch(function (error) {
+    // handle error
+    console.log(error);
+  });
+
+  return new Promise((resolve, reject) => resolve(responseFurther));
 };
