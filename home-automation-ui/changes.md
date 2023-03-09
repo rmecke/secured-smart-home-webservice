@@ -8,3 +8,5 @@
 09.03.2023
 - Changes to the api to establish connection with backend for controls of the devices.
 - Added ```Buzzer``` control.
+- Added ```Guard``` hoc component to restrict access.
+- Added ```auth``` store to handle authentification.
