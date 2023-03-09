@@ -8,6 +8,7 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import roomsReducers from "./store/rooms/rooms.reducers";
 import devicesReducers from "./store/devices/devices.reducers";
 import uiReducers from "./store/ui/ui.reducers";
+import authReducers from "./store/auth/auth.reducers";
 import * as serviceWorker from "./serviceWorker";
 import fontawesomeIcons from "./utils/fontawesome.icons";
 import App from "./App";
@@ -30,7 +31,8 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const rootReduce = combineReducers({
   rooms: roomsReducers,
   devices: devicesReducers,
-  ui: uiReducers
+  ui: uiReducers,
+  auth: authReducers,
 });
 
 // Create the Redux store
