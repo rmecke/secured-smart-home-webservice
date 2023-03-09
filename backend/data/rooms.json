@@ -5,6 +5,11 @@
       "icon": "flask",
       "devicesCount": 1
     },
+    "garage": {
+      "name": "Garage",
+      "icon": "flask",
+      "devicesCount": 1
+    },
     "living-room": {
       "name": "Living Room",
       "icon": "couch",

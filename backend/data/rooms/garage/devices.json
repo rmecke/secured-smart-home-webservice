@@ -1,0 +1,21 @@
+{
+  "devices": {
+    "3911949999": {
+      "name": "Garage",
+      "switch": true,
+      "icon":"",
+      "controls": {
+        "39119499991": {
+          "name": "Garage öffnen",
+          "type": "buzzer",
+          "datapoint": "myq.0.devices.CG0811460676.commands.open"
+        },
+        "39119499992": {
+          "name": "Garage schließen",
+          "type": "buzzer",
+          "datapoint": "myq.0.devices.CG0811460676.commands.close"
+        }
+      }
+    }
+  }
+}
