@@ -30,6 +30,10 @@ async function retrieveDeviceValues(device) {
             // handle success
             console.log(`device ${device.name}: ${JSON.stringify(response.data)}`);
             device.switch = response.data;
+        })
+        .catch(function (error) {
+            // handle error
+            console.log(error);
         });
     }
 
@@ -42,6 +46,10 @@ async function retrieveDeviceValues(device) {
                     // handle success
                     console.log(`device ${control.name}: ${JSON.stringify(response.data)}`);
                     control.value = response.data;
+                })
+                .catch(function (error) {
+                    // handle error
+                    console.log(error);
                 });
             }
         }
@@ -174,4 +182,8 @@ app.patch('/update', async (req, res) => {
     } else {
         res.status(400).send();
     }
+})
+
+app.post("/login", async(req,res) => {
+    
 })

@@ -12,9 +12,19 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faWindowClose } from "@fortawesome/free-solid-svg-icons";
 import Backdrop from "../../components/UI/Backdrop/Backdrop";
 
+import {
+  logout
+} from "./../../store/auth/auth.actions";
+
 export class SideDrawer extends Component {
   static propTypes = {
-    isOpen: PropTypes.bool
+    isOpen: PropTypes.bool,
+    logout: PropTypes.func
+  };
+
+  onLogoutClickHandler = () => {
+    console.log(this.props);
+    this.props.logout();
   };
 
   render() {
@@ -38,11 +48,10 @@ export class SideDrawer extends Component {
               </NavigationItem>
               <NavigationItem>
                 <a
-                  href="https://github.com/AbdelrahmanSE/home-automation-ui"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href= "#"
+                  onClick={this.onLogoutClickHandler}
                 >
-                  Github
+                  Logout
                 </a>
               </NavigationItem>
             </Navigation>
@@ -57,7 +66,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  toggleSideDrawer
+  toggleSideDrawer,
+  logout
 };
 
 export default connect(

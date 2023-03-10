@@ -11,16 +11,26 @@ import NavigationItem from "./../../components/Layout/Navigation/NavigationItem/
 
 import classes from "./Header.module.scss";
 
+import {
+  logout
+} from "./../../store/auth/auth.actions";
+
 export class Header extends Component {
   static propTypes = {
-    toggleSideDrawer: PropTypes.func
+    toggleSideDrawer: PropTypes.func,
+    logout: PropTypes.func
+  };
+
+  onLogoutClickHandler = () => {
+    console.log(this.props);
+    this.props.logout();
   };
 
   render() {
     return (
       <header className={classes.Header}>
         <div className={classes.HeaderContainer}>
-          <div className={classes.AppName}>Home Automation UI</div>
+          <div className={classes.AppName}>Secured Smart Home</div>
           <div className={classes.Navigation}>
             <Navigation>
               <NavigationItem>
@@ -28,11 +38,10 @@ export class Header extends Component {
               </NavigationItem>
               <NavigationItem>
                 <a
-                  href="https://github.com/AbdelrahmanSE/home-automation-ui"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href= "#"
+                  onClick={this.onLogoutClickHandler}
                 >
-                  Github
+                  Logout
                 </a>
               </NavigationItem>
             </Navigation>
@@ -49,7 +58,8 @@ export class Header extends Component {
 }
 
 const mapDispatchToProps = {
-  toggleSideDrawer
+  toggleSideDrawer,
+  logout
 };
 
 export default connect(

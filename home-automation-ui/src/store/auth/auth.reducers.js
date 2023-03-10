@@ -3,7 +3,7 @@ import {
   REGISTER_FAILED,
   LOGIN_SUCCESS,
   LOGIN_FAILED,
-  LOGOUT,
+  LOGOUT_SUCCESS,
 } from "./auth.actiontypes";
 
 const user = JSON.parse(localStorage.getItem("user"));
@@ -38,7 +38,7 @@ export default (state = initialState, { type, payload }) => {
         isLoggedIn: false,
         user: null
       };
-    case LOGOUT:
+    case LOGOUT_SUCCESS:
       return {
         ...state,
         isLoggedIn: false,
