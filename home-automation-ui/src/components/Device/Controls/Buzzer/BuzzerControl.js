@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "../../../UI/Button/Button";
 import classes from "./BuzzerControl.module.scss";
 

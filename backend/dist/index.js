@@ -40,6 +40,10 @@ function retrieveDeviceValues(device) {
                 // handle success
                 console.log(`device ${device.name}: ${JSON.stringify(response.data)}`);
                 device.switch = response.data;
+            })
+                .catch(function (error) {
+                // handle error
+                console.log(error);
             });
         }
         if (device.controls) {
@@ -51,6 +55,10 @@ function retrieveDeviceValues(device) {
                         // handle success
                         console.log(`device ${control.name}: ${JSON.stringify(response.data)}`);
                         control.value = response.data;
+                    })
+                        .catch(function (error) {
+                        // handle error
+                        console.log(error);
                     });
                 }
             }
