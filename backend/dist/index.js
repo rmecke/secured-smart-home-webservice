@@ -175,3 +175,5 @@ app.patch('/update', (req, res) => __awaiter(void 0, void 0, void 0, function* (
         res.status(400).send();
     }
 }));
+app.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+}));
