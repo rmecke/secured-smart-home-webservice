@@ -8,5 +8,5 @@ export const DB: { mongoose?: typeof mongoose; User?: mongoose.Model<any, {}, {}
     mongoose: mongoose,
     User: mongoose.models.User || mongoose.model('User', UserSchema),
     Role: mongoose.models.Role || mongoose.model('Role', RoleSchema),
-    ROLES: ["user", "guest", "admin"]
+    ROLES: ["guest", "user", "admin"]
 };

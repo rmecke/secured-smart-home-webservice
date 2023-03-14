@@ -13,16 +13,15 @@ export class Guard extends Component {
   render() {
     // Check if user has access
     let content;
-    console.log(this.props.auth);
 
-    if (/*this.props.auth && this.props.auth.isLoggedIn && this.props.auth.user*/ true) {
+    if (this.props.auth && this.props.auth.isLoggedIn && this.props.auth.user) {
       content = this.props.children;
     } else {
       content = <Redirect to="/login"></Redirect>
-      const errorResponse = {
+      /*const errorResponse = {
         message: "No permissions"
       };
-      this.props.showErrorModal(errorResponse);
+      this.props.showErrorModal(errorResponse);*/
     }
 
     return (

@@ -1,13 +1,14 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import Room from "../../../components/Rooms/Room";
 import {
-  login
-} from "./../../../store/auth/auth.actions";
-import classes from "./Login.module.scss";
-import LoginBox from "../../../components/Auth/LoginBox/LoginBox";
+  register
+} from "../../../store/auth/auth.actions";
+import classes from "./Register.module.scss";
+import RegisterBox from "../../../components/Auth/RegisterBox/RegisterBox";
 
-export class Login extends Component {
+export class Register extends Component {
   static propTypes = {
     login: PropTypes.func
   };
@@ -16,10 +17,10 @@ export class Login extends Component {
     
   }
 
-  onLoginClickHandler = (username, password) => {
-    this.props.login(username,password)
+  onRegisterClickHandler = (username, password, password2) => {
+    this.props.register(username,password,password2)
       .then(() => {
-        this.props.history.push("/");
+        this.props.history.push("/login");
       })
       .catch(() => {
 
@@ -32,8 +33,8 @@ export class Login extends Component {
        <div
           className={classes.Column}
         >
-          <LoginBox
-            onLoginClick={this.onLoginClickHandler}
+          <RegisterBox
+            onRegisterClick={this.onRegisterClickHandler}
           />
         </div>
       </div>
@@ -46,10 +47,10 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  login
+  register
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Login);
+)(Register);

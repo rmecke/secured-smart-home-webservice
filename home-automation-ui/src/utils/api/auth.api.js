@@ -2,7 +2,7 @@ import axios from "./axios";
 
 export const loginAPI = async (username, password) => {
   const response = await axios
-    .post("/login", { username, password });
+    .post("/api/auth/login", { username, password });
   if (response.data.accessToken) {
     localStorage.setItem("user", JSON.stringify(response.data));
   }
@@ -13,8 +13,8 @@ export const logoutAPI = () => {
   localStorage.removeItem("user");
 }
 
-export const registerAPI = (username, password) => {
-  return axios.post("/register", {
+export const registerAPI = (username, password, password2) => {
+  return axios.post("/api/auth/register", {
     username,
     password,
   });

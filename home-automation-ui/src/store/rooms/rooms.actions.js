@@ -5,6 +5,7 @@ import {
 } from "./../../store/rooms/rooms.actiontypes";
 import { getRoomsApi } from "../../utils/api/rooms.api";
 import { showErrorModal } from "../ui/ui.actions";
+import { logout } from "../auth/auth.actions";
 
 export const fetchRooms = () => dispatch => {
   dispatch(fetchRoomsStart());
@@ -12,10 +13,18 @@ export const fetchRooms = () => dispatch => {
   getRoomsApi()
     .then(response => dispatch(fetchRoomsSuccess(response.data.rooms)))
     .catch(error => {
+      if (error.response.status === 401) {
+        dispatch(logout());
+        const errorResponse = {
+          message: "Dein Zugriff ist abgelaufen, bitte logge dich erneut ein."
+        };
+        dispatch(showErrorModal(errorResponse))
+        return;
+      }
 
       // This to mock an error response
       const errorResponse = {
-        message: "Error while getting the rooms data"
+        message: "Fehler beim Abrufen der Räume."
       };
       
       dispatch(fetchRoomsFailed(errorResponse));

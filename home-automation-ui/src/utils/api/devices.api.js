@@ -1,20 +1,25 @@
 import axios from "./axios";
+import { authHeader } from "./auth.api";
 
 export const getRoomDevicesApi = roomId => {
-  return axios.get(`/rooms/${roomId}/devices`);
+  return axios.get(`/api/home/rooms/${roomId}/devices`,{ headers: authHeader() })
+  .catch(function (error) {
+    throw(error);
+  });
 };
 
 export const toggleDeviceSwitchApi = async deviceId => {
   let responseFurther;
 
-  await axios.patch(`/switch`,
+  await axios.patch(`/api/home/rooms/switch`,
     {
       deviceId
     },
     {
-      headers:{
-        'Content-type': 'application/json'
-      }
+      headers: {
+        ...authHeader(),
+        'Content-type': 'application/json',
+      } 
     }
   )
   .then(function (response) {
@@ -26,8 +31,7 @@ export const toggleDeviceSwitchApi = async deviceId => {
     };
   })
   .catch(function (error) {
-    // handle error
-    console.log(error);
+    throw(error);
   });
   
   return new Promise((resolve, reject) => resolve(responseFurther));
@@ -36,13 +40,14 @@ export const toggleDeviceSwitchApi = async deviceId => {
 export const updateDeviceControlValueApi = async payload => {
   let responseFurther;
 
-  await axios.patch(`/update`,
+  await axios.patch(`/api/home/rooms/update`,
     {
       control: payload
     },
     {
       headers:{
-        'Content-type': 'application/json'
+        ...authHeader(),
+        'Content-type': 'application/json',
       }
     }
   )
@@ -55,8 +60,7 @@ export const updateDeviceControlValueApi = async payload => {
     };
   })
   .catch(function (error) {
-    // handle error
-    console.log(error);
+    throw(error);
   });
 
   return new Promise((resolve, reject) => resolve(responseFurther));
