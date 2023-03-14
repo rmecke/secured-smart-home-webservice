@@ -16,3 +16,9 @@
 - Added Login Page and Login Functionality.
 - Changed name in Header and Sidedrawer.
 - Added Logout to Header and Sidedrawer and Logout Functionality.
+
+14.03.2023
+- Added Register Page and Register Functionality.
+- Changed Rooms, Logout, Login, Register visibility in header/sidedrawer according to login status.
+- Changed paths in API calls.
+- Added error status handling on API calls.

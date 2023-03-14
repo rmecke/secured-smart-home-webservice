@@ -10,7 +10,7 @@ const verifyToken = (req, res, next) => {
     let token = req.headers["x-access-token"];
 
     if (!token) {
-        res.status(403).send({message: "No token provided!"});
+        res.status(401).send({message: "No token provided!"});
         return;
     }
 
@@ -24,35 +24,34 @@ const verifyToken = (req, res, next) => {
     });
 };
 
-const verifyAccessRights = (req, res, next, role) => {
-    User.findById(req.userId)
-    .exec()
-    .then((user) => {
-        Role.find({
-            _id: { $in: user.roles}
-        },
-        (err, roles) => {
-            if (err) {
-                res.status(500).send({message: err});
-            }
-
-            for (let i=0; i<roles.length; i++) {
-                if (roles[i].name === role) {
-                    next();
-                    return;
+const verifyAccessRights = (role) => {
+    return (req, res, next) => {
+        User.findById(req.userId)
+        .exec()
+        .then((user) => {
+            Role.find({
+                _id: { $in: user.roles}
+            }).then((roles) => {
+                for (let i=0; i<roles.length; i++) {
+                    if (roles[i].name === role) {
+                        next();
+                        return;
+                    }
                 }
-            }
 
-            res.status(403).send({message: "No Access Rights!"});
+                res.status(403).send({message: "No Access Rights!"});
+                return;
+            }).catch((err) => {
+                res.status(500).send({message: err});
+                return;
+            })
+
+        })
+        .catch(err => {
+            console.error(`Error while checking access rights: ${err}`);
             return;
-        }
-        )
-
-    })
-    .catch(err => {
-        console.error(`Error while checking access rights: ${err}`);
-        return;
-    })
+        })
+    }
 }
 
 export const authJwt = {

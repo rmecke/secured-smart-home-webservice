@@ -34,6 +34,28 @@ export class SideDrawer extends Component {
       sideDrawerContainerClasses.push(classes.Open);
     }
 
+    let authActions = null;
+    if (this.props.auth && this.props.auth.isLoggedIn && this.props.auth.user) {
+      authActions = <>
+        <NavigationItem>
+          <NavLink to="/">Räume</NavLink>
+        </NavigationItem>
+        <NavigationItem>
+            <NavLink to="" onClick={this.onLogoutClickHandler}>Logout</NavLink>
+        </NavigationItem>
+      </>
+    } else {
+      authActions = <>
+        <NavigationItem>
+          <NavLink to="/login">Login</NavLink>
+        </NavigationItem>
+        <NavigationItem>
+            <NavLink to="/register">Register</NavLink>
+        </NavigationItem>
+      </>
+      
+    }
+
     return (
       <div className={sideDrawerContainerClasses.join(" ")}>
         <Backdrop show={this.props.isOpen} onClick={this.props.toggleSideDrawer} />
@@ -43,17 +65,7 @@ export class SideDrawer extends Component {
         <div className={classes.SideDrawer}>
           <div className={classes.Title}>Menu</div>
           <Navigation>
-              <NavigationItem>
-                <NavLink to="/">Rooms</NavLink>
-              </NavigationItem>
-              <NavigationItem>
-                <a
-                  href= "#"
-                  onClick={this.onLogoutClickHandler}
-                >
-                  Logout
-                </a>
-              </NavigationItem>
+              {authActions}
             </Navigation>
         </div>
       </div>
@@ -62,7 +74,8 @@ export class SideDrawer extends Component {
 }
 
 const mapStateToProps = state => ({
-  isOpen: state.ui.openSideDrawer
+  isOpen: state.ui.openSideDrawer,
+  auth: state.auth
 });
 
 const mapDispatchToProps = {

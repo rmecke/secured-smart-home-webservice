@@ -6,7 +6,7 @@ const User = DB.User;
 const Role = DB.Role;
 const ROLES = DB.ROLES;
 
-const signUp = (req, res) => {
+const register = async (req, res) => {
     if (!req.body.username && !req.body.password) {
         res.status(400).send({
             message: `Failed! Username or password missing.`
@@ -14,6 +14,17 @@ const signUp = (req, res) => {
         return;
     }
 
+    // The first registered user gets all roles
+    await User.estimatedDocumentCount()
+    .then((count) => {
+        if (count === 0) {
+            console.log(`First user ${req.body.username} detected. Granting all roles...`)
+            req.body.roles = ROLES;
+        }
+    })
+    .catch((err) => {
+        console.error(`Error while retrieving User document count: ${err}`);
+    })
 
     const user = new User({
         username: req.body.username,
@@ -22,8 +33,8 @@ const signUp = (req, res) => {
 
     user.save()
     .then((user) => {
+        // Add the user to database
         if (req.body.roles) {
-            console.log("Im here!");
             Role.find(
                 {
                     name: { $in: req.body.roles }
@@ -42,29 +53,24 @@ const signUp = (req, res) => {
                     res.status(500).send({message: err});
                     return;
                 })
-            
         } else {
-            Role.findOne(
-                {
+            Role.findOne({
                     name: "guest"
-                }, 
-                (err, role) => {
-                    if (err) {
-                        res.status(500).send({message: err});
-                        return;
-                    }
-
+            }).then((role) => {
                     user.roles = [role._id];
                     user.save()
                     .then((user) => {
                         res.send({message: "User was registered successfully"});
                     })
-                    .catch((error) => {
+                    .catch((err) => {
                         res.status(500).send({message: err});
                         return;
                     });
-                }
-            )
+            }).catch((err) => {
+                res.status(500).send({message: err});
+                return;
+            })
+
         }
     })
     .catch((err) => {
@@ -73,7 +79,7 @@ const signUp = (req, res) => {
     })
 }
 
-const signIn = (req, res) => {
+const login = (req, res) => {
     User.findOne(
         {
             username: req.body.username
@@ -99,27 +105,25 @@ const signIn = (req, res) => {
         }
 
         var token = jwt.sign({id: user.id}, AUTH_CONFIG.secret, {
-            expiresIn: 86400 // 24 hours
+            expiresIn: "1d" // 24 hours
         })
 
         var authorities = [];
 
-        await Role.find(
-            {
+        await Role.find({
                 _id: { $in: user.roles }
-            },
-            (err, roles) => {
-                if (err) {
-                    res.status(500).send({message: err});
-                    return;
-                }
-
+        }).then((roles) =>{
                 let names = roles.map((role) => role.name);
                 for (let i=0; i<names.length; i++) {
                     authorities.push(`ROLE_${names[i].toUpperCase()}`);
                 }
-            }
-        )
+        }).catch((err) => {
+                if (err) {
+                    res.status(500).send({message: err});
+                    return;
+                }
+        })
+        
 
         res.status(200).send({
             id: user._id,
@@ -138,6 +142,6 @@ const signIn = (req, res) => {
 }
 
 export const authController = {
-    signUp,
-    signIn
+    register,
+    login
 }

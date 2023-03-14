@@ -61,15 +61,25 @@ export const logoutSuccess = () => ({
 });
 
 /** register */
-export const register = (username, password) => (dispatch) => {
+export const register = (username, password, password2) => (dispatch) => {
+  if (password !== password2) {
+    const errorResponse = {
+      message: "Die Passwörter stimmen nicht überein."
+    };
+    dispatch(showErrorModal(errorResponse))
+    return;
+  }
+
   return registerAPI(username, password).then(
     (response) => {
       dispatch(registerSuccess());
 
-      const errorResponse = {
-        message: response.data.message
-      };
-      dispatch(showErrorModal(errorResponse))
+      if (response.status == 200) {
+        const errorResponse = {
+          message: "Du hast dich erfolgreich registriert. Du kannst dich nun einloggen."
+        };
+        dispatch(showErrorModal(errorResponse))
+      }
 
       return Promise.resolve();
     },

@@ -27,23 +27,35 @@ export class Header extends Component {
   };
 
   render() {
+    let authActions = null;
+    if (this.props.auth && this.props.auth.isLoggedIn && this.props.auth.user) {
+      authActions = <>
+        <NavigationItem>
+          <NavLink to="/">Räume</NavLink>
+        </NavigationItem>
+        <NavigationItem>
+            <NavLink to="" onClick={this.onLogoutClickHandler}>Logout</NavLink>
+        </NavigationItem>
+      </>
+    } else {
+      authActions = <>
+        <NavigationItem>
+          <NavLink to="/login">Login</NavLink>
+        </NavigationItem>
+        <NavigationItem>
+            <NavLink to="/register">Register</NavLink>
+        </NavigationItem>
+      </>
+      
+    }
+
     return (
       <header className={classes.Header}>
         <div className={classes.HeaderContainer}>
           <div className={classes.AppName}>Secured Smart Home</div>
           <div className={classes.Navigation}>
             <Navigation>
-              <NavigationItem>
-                <NavLink to="/">Rooms</NavLink>
-              </NavigationItem>
-              <NavigationItem>
-                <a
-                  href= "#"
-                  onClick={this.onLogoutClickHandler}
-                >
-                  Logout
-                </a>
-              </NavigationItem>
+              {authActions}
             </Navigation>
           </div>
           <div className={classes.MenuBtn}>
@@ -57,12 +69,16 @@ export class Header extends Component {
   }
 }
 
+const mapStateToProps = state => ({
+  auth: state.auth
+});
+
 const mapDispatchToProps = {
   toggleSideDrawer,
   logout
 };
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(Header);

@@ -1,5 +1,5 @@
 import { authController } from "../controllers/authController";
-import { verifySignUp } from "../middlewares/verifySignUp";
+import { verifyRegister } from "../middlewares/verifyRegister";
 
 export function authRoutes(app) {
     app.use(function(req,res,next) {
@@ -11,16 +11,16 @@ export function authRoutes(app) {
     });
 
     app.post(
-        "/api/auth/signup",
+        "/api/auth/register",
         [
-            verifySignUp.checkDuplicateUsername,
-            verifySignUp.checkRolesExist
+            verifyRegister.checkDuplicateUsername,
+            verifyRegister.checkRolesExist
         ],
-        authController.signUp
+        authController.register
     );
 
     app.post(
-        "/api/auth/signup",
-        authController.signIn
+        "/api/auth/login",
+        authController.login
     )
 }

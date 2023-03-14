@@ -15,6 +15,7 @@ import {
   updateDeviceControlValueApi
 } from "../../utils/api/devices.api";
 import { showErrorModal } from "../ui/ui.actions";
+import { logout } from "../auth/auth.actions";
 
 /** Fetching Room Devices Actions */
 export const fetchRoomDevices = roomId => dispatch => {
@@ -23,9 +24,18 @@ export const fetchRoomDevices = roomId => dispatch => {
   getRoomDevicesApi(roomId)
     .then(response => dispatch(fetchRoomDevicesSuccess(response.data.devices)))
     .catch(error => {
+      if (error.response.status === 401) {
+        dispatch(logout());
+        const errorResponse = {
+          message: "Dein Zugriff ist abgelaufen, bitte logge dich erneut ein."
+        };
+        dispatch(showErrorModal(errorResponse))
+        return;
+      }
+
       // This to mock an error response
       const errorResponse = {
-        message: "Error while getting the devices data"
+        message: "Fehler beim Abrufen der Geräte im Raum."
       };
       
       dispatch(fetchRoomDevicesFailed(errorResponse));
@@ -58,10 +68,18 @@ export const toggleDeviceSwitch = deviceId => dispatch => {
   toggleDeviceSwitchApi(deviceId)
     .then(response => dispatch(toggleDeviceSwitchSuccess(response.data.deviceId)))
     .catch(error => {
+      if (error.response.status === 401) {
+        dispatch(logout());
+        const errorResponse = {
+          message: "Dein Zugriff ist abgelaufen, bitte logge dich erneut ein."
+        };
+        dispatch(showErrorModal(errorResponse))
+        return;
+      }
 
       // This to mock an error response
       const errorResponse = {
-        message: "Error while toggle the device switch"
+        message: "Fehler beim Umschalten des Gerätes."
       };
 
       dispatch(toggleDeviceSwitchFailed(errorResponse));
@@ -101,9 +119,18 @@ export const updateDeviceControlValue = controlData => dispatch => {
   updateDeviceControlValueApi(payload)
     .then(response => dispatch(updateDeviceControlSuccess(response.data.control)))
     .catch(error => {
+      if (error.response.status === 401) {
+        dispatch(logout());
+        const errorResponse = {
+          message: "Dein Zugriff ist abgelaufen, bitte logge dich erneut ein."
+        };
+        dispatch(showErrorModal(errorResponse))
+        return;
+      }
+
       // This to mock an error response
       const errorResponse = {
-        message: "Error while updating the device value"
+        message: "Fehler beim Einstellen des Gerätes."
       };
 
       dispatch(updateDeviceControlValueFailed(errorResponse));

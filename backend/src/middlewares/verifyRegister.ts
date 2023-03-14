@@ -4,8 +4,6 @@ const Role = DB.Role;
 const ROLES = DB.ROLES;
 
 const checkDuplicateUsername = (req, res, next) => {
-    console.log(1);
-
     // Username
     User.findOne({
         username: req.body.username
@@ -26,8 +24,6 @@ const checkDuplicateUsername = (req, res, next) => {
 }
 
 const checkRolesExist = (req, res, next) => {
-    console.log(2);
-
     if (req.body.roles) {
         req.body.roles.forEach((role) => {
             if (!ROLES.includes(role)) {
@@ -42,7 +38,7 @@ const checkRolesExist = (req, res, next) => {
     next();
 }
 
-export const verifySignUp = {
+export const verifyRegister = {
     checkDuplicateUsername,
     checkRolesExist
 }
