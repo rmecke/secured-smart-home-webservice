@@ -8,7 +8,9 @@ import {
   faSnowflake,
   faSun,
   faFan,
-  faFlask
+  faFlask,
+  faLaptopCode,
+  faDoorClosed
 } from "@fortawesome/free-solid-svg-icons";
 
 export default {
@@ -21,5 +23,7 @@ export default {
   faSnowflake,
   faSun,
   faFan,
-  faFlask
+  faFlask,
+  faLaptopCode,
+  faDoorClosed
 };

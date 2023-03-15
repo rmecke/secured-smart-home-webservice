@@ -1,14 +1,24 @@
 {
   "rooms": {
-    "lab": {
-      "name": "The Lab",
-      "icon": "flask",
-      "devicesCount": 1
+    "my-room": {
+      "name": "Mein Zimmer",
+      "icon": "laptop-code",
+      "devicesCount": 0
+    },
+    "stairs": {
+      "name": "Treppenhaus",
+      "icon": "door-closed",
+      "devicesCount": 0
     },
     "garage": {
       "name": "Garage",
       "icon": "flask",
-      "devicesCount": 1
+      "devicesCount": 0
+    },
+    "lab": {
+      "name": "The Lab",
+      "icon": "flask",
+      "devicesCount": 0
     },
     "living-room": {
       "name": "Living Room",

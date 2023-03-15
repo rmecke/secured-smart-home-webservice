@@ -1,0 +1,16 @@
+{
+  "devices": {
+    "my-room-ceiling": {
+      "name": "Deckenlampe",
+      "switch": true,
+      "icon":"",
+      "datapoint": "mqtt.0.RobertsRoom.Lights.Ceiling"
+    },
+    "my-room-desk": {
+      "name": "Schreibtischlampe",
+      "switch": true,
+      "icon":"",
+      "datapoint": "mqtt.0.RobertsRoom.Lights.Desk"
+    }
+  }
+}

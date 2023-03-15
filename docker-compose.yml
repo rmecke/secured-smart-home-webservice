@@ -61,9 +61,10 @@ services:
       - ./ssl_certificate:/app/ssl_certificate
     depends_on:
       - wireguard
+      - database
     network_mode: container:webservice-wireguard
   database:
-    image: mongo
+    image: mongo:4.4.19
     container_name: webservice-database
     restart: always
     environment:

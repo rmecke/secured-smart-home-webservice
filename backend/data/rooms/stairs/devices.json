@@ -1,0 +1,10 @@
+{
+  "devices": {
+    "stairs-decoration": {
+      "name": "Dekoration",
+      "switch": true,
+      "icon":"",
+      "datapoint": "mqtt.0.Stairs.Lights.Decoration"
+    }
+  }
+}
