@@ -23,23 +23,52 @@ services:
       - /lib/modules:/lib/modules #optional
     ports:
       - 51820:51820/udp
-      - 54000:54000
-      #- 3000:3000
+      - 54001:54001 # webservice-backend
+      - 54000:3000 # webservice-frontend
+      # - 54002:27017/tcp # webservice-database
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
       - net.ipv4.ip_forward=1
     restart: unless-stopped
+  frontend:
+    build: ./frontend
+    container_name: webservice-frontend
+    environment:
+      - HTTPS=true
+      - SSL_KEY_FILE=./ssl_certificate/key.pem
+      - SSL_CRT_FILE=./ssl_certificate/crt.pem
+      - REACT_APP_AXIOS_URL=https://192.168.2.121:54001 # set to http:// if HTTPS=false
+    volumes:
+      - ./ssl_certificate:/app/ssl_certificate
+    depends_on:
+      - wireguard
+    network_mode: container:webservice-wireguard
   backend:
     build: ./backend
     container_name: webservice-backend
     environment:
-      - PORT=54000
+      - HTTPS=true
+      - PORT=54001
+      - DB_HOST=127.0.0.1
+      - DB_PORT=27017
+      - DB_NAME=secured_smart_home
+      - DB_USERNAME=admin
+      - DB_USERPASSWORD=HighlyConfidentialPassword
+      - AXIOS_URL=http://192.168.2.120:8087 
+      - AUTH_SECRET=secured-smart-home
+      - CORS_ORIGIN=https://192.168.2.121:54000 # the frontend address # set to http:// if HTTPS=false
+    volumes:
+      - ./ssl_certificate:/app/ssl_certificate
     depends_on:
       - wireguard
     network_mode: container:webservice-wireguard
-  frontend:
-    build: ./frontend
-    container_name: webservice-frontend
+  database:
+    image: mongo
+    container_name: webservice-database
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: HighlyConfidentialPassword
     depends_on:
       - wireguard
     network_mode: container:webservice-wireguard

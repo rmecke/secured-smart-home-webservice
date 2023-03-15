@@ -1,7 +1,11 @@
 import axios from "axios";
+import { AXIOS_CONFIG } from "../config";
+
+const AXIOS_URL = process.env.AXIOS_URL || AXIOS_CONFIG.URL;
+console.log("AXIOS_URL: "+AXIOS_URL);
 
 const instance = axios.create({
-  baseURL: "http://192.168.2.120:8087"
+  baseURL: AXIOS_URL
 });
 
 export default instance;

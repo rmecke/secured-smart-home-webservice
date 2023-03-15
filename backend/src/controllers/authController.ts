@@ -1,10 +1,13 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { AUTH_CONFIG } from "../config/authConfig";
+import { AUTH_CONFIG } from "../config";
 import { DB } from '../models/index';
 const User = DB.User;
 const Role = DB.Role;
 const ROLES = DB.ROLES;
+
+const AUTH_SECRET = process.env.AUTH_SECRET || AUTH_CONFIG.SECRET;
+console.log("AUTH_SECRET: "+AUTH_SECRET);
 
 const register = async (req, res) => {
     if (!req.body.username && !req.body.password) {
@@ -104,7 +107,7 @@ const login = (req, res) => {
             return;
         }
 
-        var token = jwt.sign({id: user.id}, AUTH_CONFIG.secret, {
+        var token = jwt.sign({id: user.id}, AUTH_SECRET, {
             expiresIn: "1d" // 24 hours
         })
 

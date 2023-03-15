@@ -1,10 +1,11 @@
 import jwt from "jsonwebtoken";
-import { AUTH_CONFIG } from "../config/authConfig";
+import { AUTH_CONFIG } from "../config";
 import { DB } from '../models/index';
 const User = DB.User;
 const Role = DB.Role;
 const ROLES = DB.ROLES;
 
+const AUTH_SECRET = process.env.AUTH_SECRET || AUTH_CONFIG.SECRET;
 
 const verifyToken = (req, res, next) => {
     let token = req.headers["x-access-token"];
@@ -14,7 +15,7 @@ const verifyToken = (req, res, next) => {
         return;
     }
 
-    jwt.verify(token, AUTH_CONFIG.secret, (err, decoded) => {
+    jwt.verify(token, AUTH_SECRET, (err, decoded) => {
         if (err) {
             res.status(401).send({message: "Unauthorized!"});
             return;
