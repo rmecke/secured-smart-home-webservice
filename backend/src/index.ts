@@ -3,12 +3,17 @@ import cors from 'cors';
 import https from 'https';
 import fs from 'fs';
 import path from 'path';
-import { CORS_CONFIG, DB_CONFIG, HTTPS_CONFIG } from './config';
+import { CORS_CONFIG, DB_CONFIG, HTTPS_CONFIG, WEBSOCKET_CONFIG } from './config';
 import { authRoutes } from './routes/authRoutes';
 import { contentRoutes } from './routes/contentRoutes';
 import { DB } from './models/index';
 import { homeRoutes } from './routes/homeRoutes';
 import { ConnectOptions } from 'mongoose';
+import { WebSocket} from 'ws';
+import * as io from 'socket.io-client';
+import { AdminConnection } from '@iobroker/socket-client';
+import { IoBrokerSocket } from './utils/iobroker';
+
 const User = DB.User;
 const Role = DB.Role;
 const ROLES = DB.ROLES;

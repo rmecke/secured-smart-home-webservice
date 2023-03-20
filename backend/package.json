@@ -28,7 +28,8 @@
     "fastify": "^4.6.0",
     "https": "^1.0.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^7.0.1"
+    "mongoose": "^7.0.1",
+    "socket.io": "^2.5.0"
   },
   "prettier": {
     "tabWidth": 4,

@@ -29,3 +29,9 @@ export const CORS_CONFIG = {
 export const HTTPS_CONFIG = {
     ENABLED: false
 }
+
+// Only for development. 
+// For production please use environment variables: AXIOS_URL
+export const WEBSOCKET_CONFIG = {
+    URL: "http://192.168.2.120:8084"
+}

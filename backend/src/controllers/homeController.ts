@@ -1,7 +1,35 @@
 import fetch from 'cross-fetch';
 import fs from 'fs';
 import path from 'path';
+import { WEBSOCKET_CONFIG } from '../config';
+import { IoBrokerSocket } from '../utils/iobroker';
 import axios from "../utils/axios";
+
+const WEBSOCKET_URL = process.env.WEBSOCKET_URL || WEBSOCKET_CONFIG.URL;
+
+let allDatapoints: Array<string> = new Array<string>(0);
+
+let connOptions = {
+    name:                   'webservice', // optional - default 'vis.0', used to distinguish connections in socket-io adapter.
+    connLink:               WEBSOCKET_URL,  // optional - URL of the socket.io adapter. By default it is same URL where the WEB server is. 
+    socketSession:          'nokey',                       // optional - default 'nokey', and used by authentication,
+    socketForceWebSockets:  false
+};
+
+const onUpdate = (id,state) => {
+    if (allDatapoints.includes(id)) {
+        console.log(id,state);
+    }
+}
+
+let connCallbacks = {
+    onConnChange:   function (isConnected) {console.log("Connection Changed.");}, // optional - called if connection state changed.
+    onObjectChange: function (id, obj)     {console.log("Object Changed.");}, // optional - called if content of some object is changed, new object created or object was deleted (obj = null)
+    onUpdate:       onUpdate, // optional - called if state of some object is changed, new state for object is created or state was deleted (state = null)
+    onError:        function (error)       {console.log("Error.");}  // optional - called if some error occurs
+};
+
+let socket = new IoBrokerSocket(connOptions,connCallbacks,false,true);
 
 
 // Read out the room configuration from the data-folder
@@ -26,6 +54,8 @@ for (var key in roomsRoot["rooms"]) {
 // Retrieve actual value of device and controls from smart home
 async function retrieveDeviceValues(device) {
     if (device.datapoint) {
+        allDatapoints.push(device.datapoint);
+
         await axios.get(`/getPlainValue/${device.datapoint}`)
         .then(function (response) {
             // handle success
@@ -42,6 +72,8 @@ async function retrieveDeviceValues(device) {
         for (var controlKey in device.controls) {
             let control = device.controls[controlKey];
             if (control.datapoint) {
+                allDatapoints.push(control.datapoint);
+
                 await axios.get(`/getPlainValue/${control.datapoint}`)
                 .then(function (response) {
                     // handle success
