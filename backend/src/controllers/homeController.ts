@@ -4,49 +4,68 @@ import path from 'path';
 import { WEBSOCKET_CONFIG } from '../config';
 import { IoBrokerSocket } from '../utils/iobroker';
 import axios from "../utils/axios";
+import { IRoom } from 'src/interfaces';
 
 const WEBSOCKET_URL = process.env.WEBSOCKET_URL || WEBSOCKET_CONFIG.URL;
 
-let allDatapoints: Array<string> = new Array<string>(0);
-
-let connOptions = {
-    name:                   'webservice', // optional - default 'vis.0', used to distinguish connections in socket-io adapter.
-    connLink:               WEBSOCKET_URL,  // optional - URL of the socket.io adapter. By default it is same URL where the WEB server is. 
-    socketSession:          'nokey',                       // optional - default 'nokey', and used by authentication,
-    socketForceWebSockets:  false
-};
-
-const onUpdate = (id,state) => {
-    if (allDatapoints.includes(id)) {
-        console.log(id,state);
-    }
+function delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
 }
 
-let connCallbacks = {
-    onConnChange:   function (isConnected) {console.log("Connection Changed.");}, // optional - called if connection state changed.
-    onObjectChange: function (id, obj)     {console.log("Object Changed.");}, // optional - called if content of some object is changed, new object created or object was deleted (obj = null)
-    onUpdate:       onUpdate, // optional - called if state of some object is changed, new state for object is created or state was deleted (state = null)
-    onError:        function (error)       {console.log("Error.");}  // optional - called if some error occurs
-};
+let allDatapoints: Array<string> = new Array<string>(0);
+let iobroker: IoBrokerSocket = null;
+let roomsRoot = null;
 
-let socket = new IoBrokerSocket(connOptions,connCallbacks,false,true);
-
-
-// Read out the room configuration from the data-folder
-let roomsFile = fs.readFileSync(path.resolve(__dirname, "../../data/rooms.json"));
-let roomsRoot = JSON.parse(roomsFile.toString());
-for (var key in roomsRoot["rooms"]) {
-    if (roomsRoot["rooms"].hasOwnProperty(key)) {
-        let node = roomsRoot["rooms"][key]; 
-
-        let roomFile = fs.readFileSync(path.resolve(__dirname, `../../data/rooms/${key}/devices.json`));
-        let roomRoot = JSON.parse(roomFile.toString());
-
-        node.devices = roomRoot["devices"];
-        node.devicesCount = Object.keys(roomRoot["devices"]).length;
-
-        for (var deviceKey in node.devices) {
-            retrieveDeviceValues(node.devices[deviceKey]);
+// First, we enable the connection to iobroker through a WebSocket
+retrieveRoomData();
+async function retrieveRoomData() {
+    let connOptions = {
+        name:                   'webservice', // optional - default 'vis.0', used to distinguish connections in socket-io adapter.
+        connLink:               WEBSOCKET_URL,  // optional - URL of the socket.io adapter. By default it is same URL where the WEB server is. 
+        socketSession:          'nokey',                       // optional - default 'nokey', and used by authentication,
+        socketForceWebSockets:  false
+    };
+    
+    const onUpdate = (id,state) => {
+        if (allDatapoints.includes(id)) {
+            console.log(`\x1b[36m${id}\x1b[0m: ${state.val}`);
+        }
+    }
+    
+    let connCallbacks = {
+        onConnChange:   function (isConnected) {console.log("Connection Changed.");}, // optional - called if connection state changed.
+        onObjectChange: function (id, obj)     {console.log("Object Changed.");}, // optional - called if content of some object is changed, new object created or object was deleted (obj = null)
+        onUpdate:       onUpdate, // optional - called if state of some object is changed, new state for object is created or state was deleted (state = null)
+        onError:        function (error)       {console.log("Error.");}  // optional - called if some error occurs
+    };
+    
+    // For documentation of iobroker socket commands, visit: https://github.com/ioBroker/ioBroker.socketio#usage
+    iobroker = new IoBrokerSocket(connOptions,connCallbacks,false,true);
+    
+    // Waiting logic to ensure, that the connection is established before making requests to iobroker
+    while(!iobroker.getIsConnected()) {
+        // Loop until socket is connected
+        console.log("Checking websocket connection...");
+        await delay(1000);
+    }
+    console.log("Websocket connected: ", iobroker.getIsConnected());
+    
+    // Next, we read out the room configuration from the data-folder
+    let roomsFile = fs.readFileSync(path.resolve(__dirname, "../../data/rooms.json"));
+    roomsRoot = JSON.parse(roomsFile.toString());
+    for (var key in roomsRoot["rooms"]) {
+        if (roomsRoot["rooms"].hasOwnProperty(key)) {
+            let node: IRoom = roomsRoot["rooms"][key]; 
+    
+            let roomFile = fs.readFileSync(path.resolve(__dirname, `../../data/rooms/${key}/devices.json`));
+            let roomRoot = JSON.parse(roomFile.toString());
+    
+            node.devices = roomRoot["devices"];
+            node.devicesCount = Object.keys(roomRoot["devices"]).length;
+    
+            for (var deviceKey in node.devices) {
+                retrieveDeviceValues(node.devices[deviceKey]);
+            }
         }
     }
 }
@@ -56,16 +75,25 @@ async function retrieveDeviceValues(device) {
     if (device.datapoint) {
         allDatapoints.push(device.datapoint);
 
-        await axios.get(`/getPlainValue/${device.datapoint}`)
+        iobroker.getStates([device.datapoint], (error,states) => {
+            if (error) {
+                console.error("Error retrieving data point",device.datapoint,error);
+                return;
+            }
+
+            device.switch = states[device.datapoint].val;
+            console.log(`\x1b[36m${device.datapoint}\x1b[0m: ${device.switch}`);
+        })
+
+        /*await axios.get(`/getPlainValue/${device.datapoint}`)
         .then(function (response) {
             // handle success
-            console.log(`device ${device.name}: ${JSON.stringify(response.data)}`);
-            device.switch = response.data;
+            
         })
         .catch(function (error) {
             // handle error
             //console.log(error);
-        });
+        });*/
     }
 
     if (device.controls) {
@@ -74,7 +102,16 @@ async function retrieveDeviceValues(device) {
             if (control.datapoint) {
                 allDatapoints.push(control.datapoint);
 
-                await axios.get(`/getPlainValue/${control.datapoint}`)
+                iobroker.getStates([control.datapoint], (error,states) => {
+                    if (error) {
+                        console.error("Error retrieving data point",control.datapoint,error);
+                        return;
+                    }
+        
+                    control.value = states[control.datapoint].val;
+                    console.log(`\x1b[36m${control.datapoint}\x1b[0m: ${control.value}`);
+                })
+                /*await axios.get(`/getPlainValue/${control.datapoint}`)
                 .then(function (response) {
                     // handle success
                     console.log(`device ${control.name}: ${JSON.stringify(response.data)}`);
@@ -83,7 +120,7 @@ async function retrieveDeviceValues(device) {
                 .catch(function (error) {
                     // handle error
                     //console.log(error);
-                });
+                });*/
             }
         }
     }
@@ -114,7 +151,16 @@ const switchDevice = async (req,res) => {
     if (device) {
         let success: boolean;
 
-        await axios.get(`/set/${device.datapoint}?value=${!device.switch}`)
+        iobroker.setState(device.datapoint,!device.switch, (error) => {
+            if (error) {
+                res.status(500).send();
+            } else {
+                device.switch = !device.switch;
+                res.status(200).send();
+            }
+        })
+
+        /*await axios.get(`/set/${device.datapoint}?value=${!device.switch}`)
         .then(function (response) {
             // handle success
             success = true;
@@ -129,7 +175,7 @@ const switchDevice = async (req,res) => {
             res.status(200).send();
         } else {
             res.status(500).send();
-        }
+        }*/
     } else {
         res.status(400).send();
     }
@@ -154,7 +200,16 @@ const updateDevice = async (req,res) => {
         if (control) {
             let success: boolean;
 
-            await axios.get(`/set/${control.datapoint}?value=${req.body.control.newValue}`)
+            iobroker.setState(control.datapoint,req.body.control.newValue, (error) => {
+                if (error) {
+                    res.status(500).send();
+                } else {
+                    control.value=req.body.control.newValue;
+                    res.status(200).send();
+                }
+            })
+
+            /*await axios.get(`/set/${control.datapoint}?value=${req.body.control.newValue}`)
             .then(function (response) {
                 // handle success
                 success = true;
@@ -169,7 +224,7 @@ const updateDevice = async (req,res) => {
                 res.status(200).send();
             } else {
                 res.status(500).send();
-            }
+            }*/
         } else {
             res.status(400).send();
         }   

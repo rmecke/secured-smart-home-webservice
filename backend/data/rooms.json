@@ -2,53 +2,43 @@
   "rooms": {
     "my-room": {
       "name": "Mein Zimmer",
-      "icon": "laptop-code",
-      "devicesCount": 0
+      "icon": "laptop-code"
     },
     "stairs": {
       "name": "Treppenhaus",
-      "icon": "door-closed",
-      "devicesCount": 0
+      "icon": "door-closed"
     },
     "garage": {
       "name": "Garage",
-      "icon": "flask",
-      "devicesCount": 0
+      "icon": "flask"
     },
     "lab": {
       "name": "The Lab",
-      "icon": "flask",
-      "devicesCount": 0
+      "icon": "flask"
     },
     "living-room": {
       "name": "Living Room",
-      "icon": "couch",
-      "devicesCount": 4
+      "icon": "couch"
     },
     "kitchen": {
       "name": "Kitchen",
-      "icon": "bread-slice",
-      "devicesCount": 4
+      "icon": "bread-slice"
     },
     "bedroom": {
       "name": "Bedroom",
-      "icon": "bed",
-      "devicesCount": 4
+      "icon": "bed"
     },
     "bathroom": {
       "name": "Bathroom",
-      "icon": "bath",
-      "devicesCount": 4
+      "icon": "bath"
     },
     "study-room": {
       "name": "Study Room",
-      "icon": "book",
-      "devicesCount": 4
+      "icon": "book"
     },
     "dining-room": {
       "name": "Dining Room",
-      "icon": "utensils",
-      "devicesCount": 3
+      "icon": "utensils"
     }
   }
 }

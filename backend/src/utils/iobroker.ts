@@ -45,7 +45,7 @@ export class IoBrokerSocket {
     _connectInterval = null;
     _countDown = null;
     _countInterval = null;
-    gettingStates = null;
+    gettingStates = 0;
     _groups = null;
 
     constructor(connOptions, connCallbacks, objectsRequired, autoSubscribe) { 
@@ -191,8 +191,6 @@ export class IoBrokerSocket {
             rememberUpgrade:                connOptions.socketForceWebSockets,
             transports:                     connOptions.socketForceWebSockets ? ['websocket'] : undefined
         });
-
-        console.log("Connect started");
 
         this._socket.on('connect', function () {
             if (that._disconnectedSince) {
@@ -666,11 +664,12 @@ export class IoBrokerSocket {
         }
         
         this.gettingStates = this.gettingStates || 0;
+        let that = this;
         if (this.gettingStates > 0) {
             // fix for slow devices -> if getStates still in progress, wait and try again
-            console.log('Trying to get states again, because emitted getStates still pending');
+            //console.log('Trying to get states again, because emitted getStates still pending');
             setTimeout(function () {
-                this.getStates(IDs, callback);
+                that.getStates(IDs, callback);
             }, 50);
             return;
         }
@@ -678,7 +677,7 @@ export class IoBrokerSocket {
         this.gettingStates++;
 
         this._socket.emit('getStates', IDs, function (err, data) {
-            this.gettingStates--;
+            that.gettingStates--;
             if (err || !data) {
                 callback && callback(err || 'Authentication required');
             } else if (callback) {
@@ -1128,23 +1127,24 @@ export class IoBrokerSocket {
 
             if (!this._authRunning) {
                 this._authRunning = true;
+                let that = this;
                 // Try to read version
                 this._checkAuth(function (version) {
                     // If we have got version string, so there is no authentication, or we are authenticated
-                    this._authRunning = false;
+                    that._authRunning = false;
                     if (version) {
-                        this._isAuthDone  = true;
+                        that._isAuthDone  = true;
                         // Repeat all stored requests
-                        var __cmdQueue = this._cmdQueue;
+                        var __cmdQueue = that._cmdQueue;
                         // Trigger GC
-                        this._cmdQueue = null;
-                        this._cmdQueue = [];
+                        that._cmdQueue = null;
+                        that._cmdQueue = [];
                         for (var t = 0, len = __cmdQueue.length; t < len; t++) {
-                            this[__cmdQueue[t].func].apply(this, __cmdQueue[t].args);
+                            that[__cmdQueue[t].func].apply(that, __cmdQueue[t].args);
                         }
                     } else {
                         // Auth required
-                        this._isAuthRequired = true;
+                        that._isAuthRequired = true;
                         // What for AuthRequest from server
                     }
                 });

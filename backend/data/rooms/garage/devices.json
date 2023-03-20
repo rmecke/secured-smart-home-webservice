@@ -1,6 +1,6 @@
 {
   "devices": {
-    "3911949999": {
+    "garage-motor": {
       "name": "Garage",
       "switch": true,
       "icon":"",

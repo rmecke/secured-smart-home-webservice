@@ -1,12 +1,12 @@
 {
   "devices": {
-    "3911949131": {
-      "name": "Lights",
+    "lab-led": {
+      "name": "LED",
       "switch": true,
       "icon":"",
       "datapoint": "mqtt.0.test.switch",
       "controls": {
-        "2612871503": {
+        "lab-led-intensity": {
           "name": "Intensity",
           "type": "scale",
           "datapoint": "mqtt.0.test.intensity",
@@ -15,7 +15,7 @@
           "max": 100,
           "step": 10
         },
-        "6560479562": {
+        "lab-led-color": {
           "name": "Color",
           "type": "mode",
           "datapoint": "mqtt.0.test.color",
