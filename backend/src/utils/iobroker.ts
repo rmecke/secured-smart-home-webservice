@@ -145,19 +145,20 @@ export class IoBrokerSocket {
     }
 
     reconnect(connOptions) {
+        const that = this;
         
         // reconnect
         if ((!connOptions.mayReconnect || connOptions.mayReconnect()) && !this._connectInterval) {
             this._connectInterval = setInterval(function () {
                 console.log('Trying connect...');
-                this._socket.connect();
-                this._countDown = Math.floor(this._reconnectInterval / 1000);
+                that._socket.connect();
+                that._countDown = Math.floor(that._reconnectInterval / 1000);
             }, this._reconnectInterval);
 
             this._countDown = Math.floor(this._reconnectInterval / 1000);
 
             this._countInterval = setInterval(function () {
-                this._countDown--;
+                that._countDown--;
             }, 1000);
         }
     }
