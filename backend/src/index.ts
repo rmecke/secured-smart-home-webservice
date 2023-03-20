@@ -9,10 +9,6 @@ import { contentRoutes } from './routes/contentRoutes';
 import { DB } from './models/index';
 import { homeRoutes } from './routes/homeRoutes';
 import { ConnectOptions } from 'mongoose';
-import { WebSocket} from 'ws';
-import * as io from 'socket.io-client';
-import { AdminConnection } from '@iobroker/socket-client';
-import { IoBrokerSocket } from './utils/iobroker';
 
 const User = DB.User;
 const Role = DB.Role;
