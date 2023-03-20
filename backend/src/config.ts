@@ -31,7 +31,7 @@ export const HTTPS_CONFIG = {
 }
 
 // Only for development. 
-// For production please use environment variables: AXIOS_URL
+// For production please use environment variables: WEBSOCKET_URL
 export const WEBSOCKET_CONFIG = {
     URL: "http://192.168.2.120:8084"
 }
