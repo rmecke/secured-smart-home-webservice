@@ -32,6 +32,9 @@ export default (state = initialState, { type, payload }) => {
       };
 
     case LOGIN_SUCCESS:
+      if (payload.user && payload.user.accessToken) {
+        openWebSocket(payload.user.accessToken);
+      }
       return {
         ...state,
         isLoggedIn: true,
