@@ -79,7 +79,7 @@ function initial() {
 // Create the REST API
 var app = express();
 
-var whitelist = ["http://localhost:54000",undefined,CORS_ORIGIN];
+var whitelist = ["http://localhost:54000","https://localhost:54000",CORS_ORIGIN];
 var corsOptions: cors.CorsOptions = {
     origin(requestOrigin, callback) {
         if (whitelist.indexOf(requestOrigin) !== -1) {

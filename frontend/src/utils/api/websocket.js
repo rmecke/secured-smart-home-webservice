@@ -4,7 +4,7 @@ import { store } from "../..";
 
 // The process.env.REACT_APP_AXIOS_URL will be replaced with the actual environment value of deployment by React on frontend server startup.
 const AXIOS_URL = process.env.REACT_APP_AXIOS_URL || AXIOS_CONFIG.URL;
-const WS_URL = AXIOS_URL.replace("http:","ws:").replace("https:","ws:");
+const WS_URL = AXIOS_URL.replace("http:","ws:").replace("https:","wss:");
 
 let ws = null;
 
