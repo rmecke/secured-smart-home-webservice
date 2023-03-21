@@ -1,3 +1,4 @@
+import { openWebSocket } from "../../utils/api/websocket";
 import {
   REGISTER_SUCCESS,
   REGISTER_FAILED,
@@ -11,6 +12,10 @@ const user = JSON.parse(localStorage.getItem("user"));
 const initialState = user 
   ? {isLoggedIn: true, user}
   : {isLoggedIn: false, user: null};
+
+if (initialState.isLoggedIn && initialState.user && initialState.user.accessToken) {
+  openWebSocket(initialState.user.accessToken);
+}
 
 export default (state = initialState, { type, payload }) => {
   switch (type) {

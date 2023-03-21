@@ -5,6 +5,7 @@ import { WEBSOCKET_CONFIG } from '../config';
 import { IoBrokerSocket } from '../utils/iobroker';
 import axios from "../utils/axios";
 import { IControl, IDatapoint, IDevice, IRoom } from 'src/interfaces';
+import { websocketController } from './websocketController';
 
 const WEBSOCKET_URL = process.env.WEBSOCKET_URL || WEBSOCKET_CONFIG.URL;
 
@@ -39,6 +40,9 @@ async function retrieveRoomData() {
                 let node: IDevice = roomsRoot["rooms"][allDatapoints[index].roomKey]["devices"][allDatapoints[index].deviceKey];
                 node.switch = state.val;
             }
+
+            // send the updated devices to the frontend
+            websocketController.sendDevicesUpdate(allDatapoints[index].roomKey,roomsRoot["rooms"][allDatapoints[index].roomKey]["devices"]);
         }
     }
     
@@ -161,8 +165,8 @@ const switchDevice = async (req,res) => {
     for (var key in roomsRoot["rooms"]) {
         if (roomsRoot["rooms"].hasOwnProperty(key)) {
             let node = roomsRoot["rooms"][key];
-            if (node["devices"][req.body.deviceId]) {
-                device = node["devices"][req.body.deviceId];
+            if (node["devices"][req.body.device.deviceId]) {
+                device = node["devices"][req.body.device.deviceId];
             }
         }
     }
@@ -170,11 +174,11 @@ const switchDevice = async (req,res) => {
     if (device) {
         let success: boolean;
 
-        iobroker.setState(device.datapoint,!device.switch, (error) => {
+        iobroker.setState(device.datapoint,req.body.device.newValue, (error) => {
             if (error) {
                 res.status(500).send();
             } else {
-                device.switch = !device.switch;
+                //device.switch = !device.switch;
                 res.status(200).send();
             }
         })
@@ -223,7 +227,7 @@ const updateDevice = async (req,res) => {
                 if (error) {
                     res.status(500).send();
                 } else {
-                    control.value=req.body.control.newValue;
+                    //control.value=req.body.control.newValue;
                     res.status(200).send();
                 }
             })

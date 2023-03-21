@@ -13,11 +13,13 @@ const authRoutes_1 = require("./routes/authRoutes");
 const contentRoutes_1 = require("./routes/contentRoutes");
 const index_1 = require("./models/index");
 const homeRoutes_1 = require("./routes/homeRoutes");
+const ws_1 = __importDefault(require("ws"));
+const websocketController_1 = require("./controllers/websocketController");
 const User = index_1.DB.User;
 const Role = index_1.DB.Role;
 const ROLES = index_1.DB.ROLES;
 const HTTPS = process.env.HTTPS || config_1.HTTPS_CONFIG.ENABLED;
-const PORT = process.env.PORT ? parseInt(process.env.PORT) : 54000;
+const PORT = process.env.PORT ? parseInt(process.env.PORT) : 54001;
 const DB_HOST = process.env.DB_HOST || config_1.DB_CONFIG.HOST;
 const DB_PORT = process.env.DB_PORT || config_1.DB_CONFIG.PORT;
 const DB_NAME = process.env.DB_NAME || config_1.DB_CONFIG.NAME;
@@ -68,8 +70,9 @@ function initial() {
         console.error(`Error while retrieving Roles document count.`);
     });
 }
+// Create the REST API
 var app = (0, express_1.default)();
-var whitelist = ["http://localhost:54000", "https://localhost:54000", CORS_ORIGIN];
+var whitelist = ["http://localhost:54000", undefined, CORS_ORIGIN];
 var corsOptions = {
     origin(requestOrigin, callback) {
         if (whitelist.indexOf(requestOrigin) !== -1) {
@@ -89,6 +92,7 @@ app.get("/", (req, res) => {
 (0, authRoutes_1.authRoutes)(app);
 (0, contentRoutes_1.contentRoutes)(app);
 (0, homeRoutes_1.homeRoutes)(app);
+let expressServer;
 if (HTTPS) {
     let keyFilePath = "../ssl_certificate/key.pem";
     let crtFilePath = "../ssl_certificate/crt.pem";
@@ -104,7 +108,7 @@ if (HTTPS) {
     if (keyFileExists && crtFileExists) {
         let keyFile = fs_1.default.readFileSync(path_1.default.resolve(__dirname, "../ssl_certificate/key.pem"));
         let crtFile = fs_1.default.readFileSync(path_1.default.resolve(__dirname, "../ssl_certificate/crt.pem"));
-        https_1.default.createServer({
+        expressServer = https_1.default.createServer({
             key: keyFile,
             cert: crtFile
         }, app)
@@ -117,7 +121,10 @@ if (HTTPS) {
     }
 }
 else {
-    app.listen(PORT, () => {
+    expressServer = app.listen(PORT, () => {
         console.log(`Server is running on port ${PORT} without SSL certificate.`);
     });
 }
+// Create the websocket
+const wss = new ws_1.default.WebSocketServer({ server: expressServer, path: "/ws" });
+wss.on("connection", websocketController_1.websocketController.onConnection);

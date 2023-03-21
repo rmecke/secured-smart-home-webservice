@@ -36,7 +36,7 @@ const rootReduce = combineReducers({
 });
 
 // Create the Redux store
-const store = createStore(rootReduce, composeEnhancers(applyMiddleware(thunk)));
+export const store = createStore(rootReduce, composeEnhancers(applyMiddleware(thunk)));
 
 /**
  * The application JSX code and creation

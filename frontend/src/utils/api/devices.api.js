@@ -8,12 +8,12 @@ export const getRoomDevicesApi = roomId => {
   });
 };
 
-export const toggleDeviceSwitchApi = async deviceId => {
+export const toggleDeviceSwitchApi = async payload => {
   let responseFurther;
 
   await axios.patch(`/api/home/rooms/switch`,
     {
-      deviceId
+      device: payload
     },
     {
       headers: {
@@ -26,7 +26,7 @@ export const toggleDeviceSwitchApi = async deviceId => {
     // handle success
     responseFurther = {
       data: {
-        deviceId
+        device: payload
       }
     };
   })

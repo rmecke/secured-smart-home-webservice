@@ -2,6 +2,7 @@ import {
   FETCH_DEVICES_START,
   FETCH_DEVICES_SUCCESS,
   FETCH_DEVICES_FAILED,
+  FETCH_DEVICES_UPDATED,
   UPDATE_DEVICE_CONTROL_VALUE_START,
   UPDATE_DEVICE_CONTROL_VALUE_SUCCESS,
   UPDATE_DEVICE_CONTROL_VALUE_FAILED,
@@ -11,7 +12,8 @@ import {
 } from "./devices.actiontypes";
 
 const initialState = {
-  devices: {}
+  devices: {},
+  roomId: ""
 };
 
 export default (state = initialState, { type, payload }) => {
@@ -25,23 +27,33 @@ export default (state = initialState, { type, payload }) => {
     case FETCH_DEVICES_SUCCESS:
       return {
         ...state,
+        roomId: payload.roomId,
         devices: payload.devices
       };
     case FETCH_DEVICES_FAILED:
       return { ...state };
+    case FETCH_DEVICES_UPDATED:
+      if (state.roomId == payload.roomId) {
+        return {
+          ...state,
+          roomId: payload.roomId,
+          devices: payload.devices
+        };
+      } else {
+        return { ...state };
+      }
 
     //Device Switch
     case TOGGLE_DEVICE_SWITCH_START:
       return { ...state };
     case TOGGLE_DEVICE_SWITCH_SUCCESS:
-      const currentSwitchState = state.devices[payload.deviceId].switch;
       return {
         ...state,
         devices: {
           ...state.devices,
           [payload.deviceId]: {
             ...state.devices[payload.deviceId],
-            switch: !currentSwitchState
+            switch: payload.newValue
           }
         }
       };

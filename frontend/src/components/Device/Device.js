@@ -16,6 +16,14 @@ export default class Device extends Component {
   /**
    * Event fired when the value of a control is changed
    */
+  onToggleDeviceSwitchHandler = () => {
+    let newValue = !this.props.device.switch;
+    this.props.onToggleDeviceSwitch(this.props.deviceId, newValue);
+  };
+
+  /**
+   * Event fired when the value of a control is changed
+   */
   onControlValueChangedHandler = (controlId, newValue) => {
     this.props.onControlValueChanged(this.props.deviceId, controlId, newValue);
   };
@@ -53,7 +61,7 @@ export default class Device extends Component {
           <div className={classes.Title}>{this.props.device.name}</div>
           <div className={classes.Switch}>
             <Switch
-              onChange={this.props.onToggleDeviceSwitch}
+              onChange={this.onToggleDeviceSwitchHandler}
               checked={this.props.device.switch}
             />
           </div>

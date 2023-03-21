@@ -36,8 +36,8 @@ export class RoomDevices extends Component {
   /**
    * This for toggling the main switch of the device
    */
-  toggleDeviceSwitch = deviceId => {
-    this.props.toggleDeviceSwitch(deviceId);
+  onToggleDeviceSwitchHandler = (deviceId, newValue) => {
+    this.props.toggleDeviceSwitch({deviceId, newValue});
   };
 
   /**
@@ -65,7 +65,7 @@ export class RoomDevices extends Component {
                 <Device
                   deviceId={deviceId}
                   device={deviceData}
-                  onToggleDeviceSwitch={() => this.toggleDeviceSwitch(deviceId)}
+                  onToggleDeviceSwitch={this.onToggleDeviceSwitchHandler}
                   onControlValueChanged={this.onControlValueChangedHandler}
                 />
               </div>

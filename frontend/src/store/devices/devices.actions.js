@@ -2,6 +2,7 @@ import {
   FETCH_DEVICES_START,
   FETCH_DEVICES_SUCCESS,
   FETCH_DEVICES_FAILED,
+  FETCH_DEVICES_UPDATED,
   TOGGLE_DEVICE_SWITCH_START,
   TOGGLE_DEVICE_SWITCH_SUCCESS,
   TOGGLE_DEVICE_SWITCH_FAILED,
@@ -22,7 +23,7 @@ export const fetchRoomDevices = roomId => dispatch => {
   dispatch(fetchRoomDevicesStart());
 
   getRoomDevicesApi(roomId)
-    .then(response => dispatch(fetchRoomDevicesSuccess(response.data.devices)))
+    .then(response => dispatch(fetchRoomDevicesSuccess(roomId,response.data.devices)))
     .catch(error => {
       if (error.response.status === 401) {
         dispatch(logout());
@@ -43,13 +44,19 @@ export const fetchRoomDevices = roomId => dispatch => {
     });
 };
 
+export const fetchRoomDevicesUpdate = (roomId,devices) => dispatch => {
+  console.log("dispatched");
+  dispatch(fetchRoomDevicesUpdated(roomId,devices));
+};
+
 export const fetchRoomDevicesStart = () => ({
   type: FETCH_DEVICES_START
 });
 
-export const fetchRoomDevicesSuccess = devices => ({
+export const fetchRoomDevicesSuccess = (roomId,devices) => ({
   type: FETCH_DEVICES_SUCCESS,
   payload: {
+    roomId: roomId,
     devices: devices
   }
 });
@@ -61,13 +68,29 @@ export const fetchRoomDevicesFailed = error => ({
   }
 });
 
+export const fetchRoomDevicesUpdated = (roomId,devices) => ({
+  type: FETCH_DEVICES_UPDATED,
+  payload: {
+    roomId: roomId,
+    devices: devices
+  }
+});
+
 /** Device Switch Toggle Actions */
-export const toggleDeviceSwitch = deviceId => dispatch => {
+export const toggleDeviceSwitch = controlData => dispatch => {
   dispatch(toggleDeviceSwitchStart());
 
-  toggleDeviceSwitchApi(deviceId)
-    .then(response => dispatch(toggleDeviceSwitchSuccess(response.data.deviceId)))
+  const payload = {
+    deviceId: controlData.deviceId,
+    newValue: controlData.newValue
+  };
+
+  console.log(payload);
+
+  toggleDeviceSwitchApi(payload)
+    .then(response => dispatch(toggleDeviceSwitchSuccess(response.data.device)))
     .catch(error => {
+      console.log(error);
       if (error.response.status === 401) {
         dispatch(logout());
         const errorResponse = {
@@ -91,10 +114,10 @@ export const toggleDeviceSwitchStart = () => ({
   type: TOGGLE_DEVICE_SWITCH_START
 });
 
-export const toggleDeviceSwitchSuccess = deviceId => ({
+export const toggleDeviceSwitchSuccess = device => ({
   type: TOGGLE_DEVICE_SWITCH_SUCCESS,
   payload: {
-    deviceId
+    ...device
   }
 });
 
@@ -119,6 +142,7 @@ export const updateDeviceControlValue = controlData => dispatch => {
   updateDeviceControlValueApi(payload)
     .then(response => dispatch(updateDeviceControlSuccess(response.data.control)))
     .catch(error => {
+      console.log(error);
       if (error.response.status === 401) {
         dispatch(logout());
         const errorResponse = {

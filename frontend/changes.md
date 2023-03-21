@@ -22,3 +22,7 @@
 - Changed Rooms, Logout, Login, Register visibility in header/sidedrawer according to login status.
 - Changed paths in API calls.
 - Added error status handling on API calls.
+
+21.03.2023
+- Changed toggleDeviceSwitch to use a payload with deviceId and newValue instead of only deviceId.
+- Added WebSocket-Client for instant updates on iobroker state changes.

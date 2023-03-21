@@ -3,19 +3,23 @@ import cors from 'cors';
 import https from 'https';
 import fs from 'fs';
 import path from 'path';
-import { CORS_CONFIG, DB_CONFIG, HTTPS_CONFIG, WEBSOCKET_CONFIG } from './config';
+import { AUTH_CONFIG, CORS_CONFIG, DB_CONFIG, HTTPS_CONFIG, WEBSOCKET_CONFIG } from './config';
 import { authRoutes } from './routes/authRoutes';
 import { contentRoutes } from './routes/contentRoutes';
 import { DB } from './models/index';
 import { homeRoutes } from './routes/homeRoutes';
 import { ConnectOptions } from 'mongoose';
+import url from 'url';
+import jwt from "jsonwebtoken";
+import Websocket from 'ws';
+import { websocketController } from './controllers/websocketController';
 
 const User = DB.User;
 const Role = DB.Role;
 const ROLES = DB.ROLES;
 
 const HTTPS = process.env.HTTPS || HTTPS_CONFIG.ENABLED;
-const PORT = process.env.PORT ? parseInt(process.env.PORT) : 54000;
+const PORT = process.env.PORT ? parseInt(process.env.PORT) : 54001;
 
 const DB_HOST = process.env.DB_HOST || DB_CONFIG.HOST;
 const DB_PORT = process.env.DB_PORT || DB_CONFIG.PORT;
@@ -72,9 +76,10 @@ function initial() {
     })
 }
 
+// Create the REST API
 var app = express();
 
-var whitelist = ["http://localhost:54000","https://localhost:54000",CORS_ORIGIN];
+var whitelist = ["http://localhost:54000",undefined,CORS_ORIGIN];
 var corsOptions: cors.CorsOptions = {
     origin(requestOrigin, callback) {
         if (whitelist.indexOf(requestOrigin) !== -1) {
@@ -96,6 +101,8 @@ authRoutes(app);
 contentRoutes(app);
 homeRoutes(app);
 
+let expressServer;
+
 if (HTTPS) {
     let keyFilePath = "../ssl_certificate/key.pem";
     let crtFilePath = "../ssl_certificate/crt.pem";
@@ -114,7 +121,7 @@ if (HTTPS) {
         let keyFile = fs.readFileSync(path.resolve(__dirname, "../ssl_certificate/key.pem"));
         let crtFile = fs.readFileSync(path.resolve(__dirname, "../ssl_certificate/crt.pem"));
 
-        https.createServer({
+        expressServer = https.createServer({
                 key: keyFile,
                 cert: crtFile
             },app)
@@ -126,7 +133,11 @@ if (HTTPS) {
     }
     
 } else {
-    app.listen(PORT, () => {
+    expressServer = app.listen(PORT, () => {
         console.log(`Server is running on port ${PORT} without SSL certificate.`);
     })
 }
+
+// Create the websocket
+const wss = new Websocket.WebSocketServer({server: expressServer, path: "/ws"});
+wss.on("connection", websocketController.onConnection);
