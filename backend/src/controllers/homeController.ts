@@ -4,7 +4,7 @@ import path from 'path';
 import { WEBSOCKET_CONFIG } from '../config';
 import { IoBrokerSocket } from '../utils/iobroker';
 import axios from "../utils/axios";
-import { IRoom } from 'src/interfaces';
+import { IControl, IDatapoint, IDevice, IRoom } from 'src/interfaces';
 
 const WEBSOCKET_URL = process.env.WEBSOCKET_URL || WEBSOCKET_CONFIG.URL;
 
@@ -12,7 +12,7 @@ function delay(ms: number) {
     return new Promise( resolve => setTimeout(resolve, ms) );
 }
 
-let allDatapoints: Array<string> = new Array<string>(0);
+let allDatapoints: Array<IDatapoint> = new Array<IDatapoint>(0);
 let iobroker: IoBrokerSocket = null;
 let roomsRoot = null;
 
@@ -27,8 +27,18 @@ async function retrieveRoomData() {
     };
     
     const onUpdate = (id,state) => {
-        if (allDatapoints.includes(id)) {
+        let index = allDatapoints.findIndex((x) => {return x.id == id});
+
+        if (index >= 0) {
             console.log(`\x1b[36m${id}\x1b[0m: ${state.val}`);
+
+            if (allDatapoints[index].controlKey) {
+                let node: IControl = roomsRoot["rooms"][allDatapoints[index].roomKey]["devices"][allDatapoints[index].deviceKey]["controls"][allDatapoints[index].controlKey];
+                node.value = state.val;
+            } else {
+                let node: IDevice = roomsRoot["rooms"][allDatapoints[index].roomKey]["devices"][allDatapoints[index].deviceKey];
+                node.switch = state.val;
+            }
         }
     }
     
@@ -53,27 +63,31 @@ async function retrieveRoomData() {
     // Next, we read out the room configuration from the data-folder
     let roomsFile = fs.readFileSync(path.resolve(__dirname, "../../data/rooms.json"));
     roomsRoot = JSON.parse(roomsFile.toString());
-    for (var key in roomsRoot["rooms"]) {
-        if (roomsRoot["rooms"].hasOwnProperty(key)) {
-            let node: IRoom = roomsRoot["rooms"][key]; 
+    for (var roomKey in roomsRoot["rooms"]) {
+        if (roomsRoot["rooms"].hasOwnProperty(roomKey)) {
+            let node: IRoom = roomsRoot["rooms"][roomKey]; 
     
-            let roomFile = fs.readFileSync(path.resolve(__dirname, `../../data/rooms/${key}/devices.json`));
+            let roomFile = fs.readFileSync(path.resolve(__dirname, `../../data/rooms/${roomKey}/devices.json`));
             let roomRoot = JSON.parse(roomFile.toString());
     
             node.devices = roomRoot["devices"];
             node.devicesCount = Object.keys(roomRoot["devices"]).length;
     
             for (var deviceKey in node.devices) {
-                retrieveDeviceValues(node.devices[deviceKey]);
+                retrieveDeviceValues(node.devices[deviceKey],roomKey,deviceKey);
             }
         }
     }
 }
 
 // Retrieve actual value of device and controls from smart home
-async function retrieveDeviceValues(device) {
+async function retrieveDeviceValues(device,roomKey,deviceKey) {
     if (device.datapoint) {
-        allDatapoints.push(device.datapoint);
+        allDatapoints.push({
+            id: device.datapoint,
+            roomKey: roomKey,
+            deviceKey: deviceKey,
+        });
 
         iobroker.getStates([device.datapoint], (error,states) => {
             if (error) {
@@ -100,7 +114,12 @@ async function retrieveDeviceValues(device) {
         for (var controlKey in device.controls) {
             let control = device.controls[controlKey];
             if (control.datapoint) {
-                allDatapoints.push(control.datapoint);
+                allDatapoints.push({
+                    id: control.datapoint,
+                    roomKey: roomKey,
+                    deviceKey: deviceKey,
+                    controlKey: controlKey
+                });
 
                 iobroker.getStates([control.datapoint], (error,states) => {
                     if (error) {

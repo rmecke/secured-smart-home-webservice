@@ -99,3 +99,25 @@ export interface IOption {
      */
     icon: string
 }
+
+export interface IDatapoint {
+    /**
+     * The id of the datapoint.
+     */
+    id: string
+
+    /**
+     * The identifier of the room.
+     */
+    roomKey: string,
+
+    /**
+     * The identifier of the device.
+     */
+    deviceKey: string,
+
+    /**
+     * The identifier of the control.
+     */
+    controlKey?: string,
+}
