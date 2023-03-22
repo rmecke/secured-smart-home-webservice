@@ -26,3 +26,6 @@
 21.03.2023
 - Changed toggleDeviceSwitch to use a payload with deviceId and newValue instead of only deviceId.
 - Added WebSocket-Client for instant updates on iobroker state changes.
+
+22.03.2023
+- Added Sensor component.

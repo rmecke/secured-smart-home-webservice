@@ -2,10 +2,11 @@ import React from "react";
 import PropTypes from "prop-types";
 import { TEMPERATURE, SCALE } from "../../../utils/deviceControls.types";
 import TemperatureControl from "../Controls/Temperature/TemperatureControl";
-import { MODE, BUZZER } from "./../../../utils/deviceControls.types";
+import { MODE, BUZZER, SENSOR } from "./../../../utils/deviceControls.types";
 import ModeControl from "../Controls/Mode/ModeControl";
 import ScaleControl from "../Controls/Scale/ScaleControl";
 import BuzzerControl from "../Controls/Buzzer/BuzzerControl";
+import SensorControl from "../Controls/Sensor/SensorControl";
 
 import classes from "./ControlsSwitcher.module.scss";
 
@@ -34,6 +35,9 @@ function ControlsSwitcher(props) {
       break;
     case BUZZER:
       control = <BuzzerControl {...controlProps} />;
+      break;
+    case SENSOR:
+      control = <SensorControl {...controlProps} />;
       break;
     default:
       control = null;

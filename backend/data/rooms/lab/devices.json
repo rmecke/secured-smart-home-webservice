@@ -6,6 +6,14 @@
       "icon":"",
       "datapoint": "mqtt.0.test.switch",
       "controls": {
+        "lab-led-sensor": {
+          "name": "Clap",
+          "type": "sensor",
+          "datapoint": "mqtt.0.test.clap",
+          "value": 0,
+          "min": 0,
+          "max": 4
+        },
         "lab-led-intensity": {
           "name": "Intensity",
           "type": "scale",
@@ -35,7 +43,6 @@
             }
           }
         }
-        
       }
     }
   }
