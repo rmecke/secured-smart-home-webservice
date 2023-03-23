@@ -17,10 +17,10 @@
         "lab-plant-sensor": {
           "name": "Plant",
           "type": "sensor",
-          "datapoint": "mqtt.0.test.plant",
+          "datapoint": "mqtt.0.test.plantpercent",
           "value": 0,
-          "min": 500,
-          "max": 1024
+          "min": 0,
+          "max": 100
         },
         "lab-led-intensity": {
           "name": "Intensity",
