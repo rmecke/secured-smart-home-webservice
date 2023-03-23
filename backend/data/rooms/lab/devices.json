@@ -19,7 +19,7 @@
           "type": "sensor",
           "datapoint": "mqtt.0.test.plant",
           "value": 0,
-          "min": 0,
+          "min": 500,
           "max": 100
         },
         "lab-led-intensity": {
