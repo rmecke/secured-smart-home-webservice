@@ -283,17 +283,11 @@ export class IoBrokerSocket {
                     if (that._isConnected) {
                         return
                     }
-                    var elem = document.getElementById('server-disconnect');
-                    if (elem) {
-                        elem.style.display = '';
-                    }
+                    
                     that._connCallbacks.onConnChange(that._isConnected);
                 }, 5000);
             } else {
-                var elem = document.getElementById('server-disconnect');
-                if (elem) {
-                    elem.style.display = '';
-                }
+                
             }
 
             // reconnect
@@ -1315,7 +1309,7 @@ export class IoBrokerSocket {
         
         this.getLiveHost(function (host) {
             if (!host) {
-                return window.alert('No active host found');
+                return console.log('No active host found');
             }
             // to do find active host
             this._socket.emit('sendToHost', host, 'readDirAsZip', {
@@ -1346,7 +1340,7 @@ export class IoBrokerSocket {
         
         this.getLiveHost(function (host) {
             if (!host) {
-                return window.alert('No active host found');
+                return console.log('No active host found');
             }
             this._socket.emit('sendToHost', host, 'writeDirAsZip', {
                 id:   this.namespace,

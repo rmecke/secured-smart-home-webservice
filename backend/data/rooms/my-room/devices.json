@@ -11,6 +11,12 @@
       "switch": true,
       "icon":"",
       "datapoint": "mqtt.0.RobertsRoom.Lights.Desk"
+    },
+    "my-room-tv": {
+      "name": "Fernseher",
+      "switch": true,
+      "icon":"",
+      "datapoint": "0_userdata.0.translator.tv"
     }
   }
 }

@@ -5,6 +5,11 @@ import { AUTH_CONFIG } from '../config';
 var wsClients = [];
 const AUTH_SECRET = process.env.AUTH_SECRET || AUTH_CONFIG.SECRET;
 
+/**
+ * Check if jwt token of client is valid. If not, close the websocket connection.
+ * @param ws 
+ * @param req 
+ */
 const onConnection = (ws, req) => {
     var token: any = url.parse(req.url,true).query.token;
     console.log("connection established",req);
@@ -22,10 +27,13 @@ const onConnection = (ws, req) => {
     });
 }
 
+/**
+ * Send the updated room data to the client.
+ * @param roomId 
+ * @param devices 
+ */
 const sendDevicesUpdate = (roomId, devices) => {
     for (const [token, client] of Object.entries(wsClients)) {
-        console.log("message outgoing",roomId,devices);
-
         jwt.verify(token, AUTH_SECRET, (err, decoded) => {
             if (err) {
                 client.send("Error: Token expired.");

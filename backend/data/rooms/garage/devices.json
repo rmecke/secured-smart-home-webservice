@@ -2,18 +2,23 @@
   "devices": {
     "garage-motor": {
       "name": "Garage",
-      "switch": true,
       "icon":"",
       "controls": {
-        "39119499991": {
-          "name": "Garage öffnen",
-          "type": "buzzer",
-          "datapoint": "myq.0.devices.CG0811460676.commands.open"
-        },
-        "39119499992": {
-          "name": "Garage schließen",
-          "type": "buzzer",
-          "datapoint": "myq.0.devices.CG0811460676.commands.close"
+        "garage-motor-state": {
+          "name": "Status",
+          "type": "mode",
+          "datapoint": "0_userdata.0.translator.garage_motor",
+          "value": "red",
+          "options": {
+            "open": {
+              "name": "Offen",
+              "icon": ""
+            },
+            "closed": {
+              "name": "Geschlossen",
+              "icon": ""
+            }
+          }
         }
       }
     }

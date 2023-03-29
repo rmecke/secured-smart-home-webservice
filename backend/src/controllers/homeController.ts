@@ -130,9 +130,13 @@ async function retrieveDeviceValues(device,roomKey,deviceKey) {
                         console.error("Error retrieving data point",control.datapoint,error);
                         return;
                     }
-        
-                    control.value = states[control.datapoint].val;
-                    console.log(`\x1b[36m${control.datapoint}\x1b[0m: ${control.value}`);
+
+                    if (states[control.datapoint]) {
+                        control.value = states[control.datapoint].val;
+                        console.log(`\x1b[36m${control.datapoint}\x1b[0m: ${control.value}`);
+                    } else {
+                        console.log(`\x1b[36m${control.datapoint}\x1b[0m: \x1b[31mN/A\x1b[0m`)
+                    }
                 })
                 /*await axios.get(`/getPlainValue/${control.datapoint}`)
                 .then(function (response) {

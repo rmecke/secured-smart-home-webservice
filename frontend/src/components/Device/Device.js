@@ -54,17 +54,25 @@ export default class Device extends Component {
       );
     }
 
+    let switcher;
+    if (typeof this.props.device.switch === "boolean") {
+      switcher = (
+        <div className={classes.Switch}>
+          <Switch
+            onChange={this.onToggleDeviceSwitchHandler}
+            checked={this.props.device.switch}
+          />
+        </div>
+      );
+    }
+
+
     return (
       <div className={classes.Device}>
         <div className={classes.Header}>
           <div>{this.props.device.icon}</div>
           <div className={classes.Title}>{this.props.device.name}</div>
-          <div className={classes.Switch}>
-            <Switch
-              onChange={this.onToggleDeviceSwitchHandler}
-              checked={this.props.device.switch}
-            />
-          </div>
+          {switcher}
         </div>
         <div>{deviceControls}</div>
       </div>

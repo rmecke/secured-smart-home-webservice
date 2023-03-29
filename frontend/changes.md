@@ -29,3 +29,6 @@
 
 22.03.2023
 - Added Sensor component.
+
+29.03.2023
+- Changed device toggle option to be visible only, if toggle property for a device is defined.

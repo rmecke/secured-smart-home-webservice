@@ -17,7 +17,7 @@
         "lab-plant-sensor": {
           "name": "Plant",
           "type": "sensor",
-          "datapoint": "mqtt.0.test.plantpercent",
+          "datapoint": "0_userdata.0.translator.plant_percent",
           "value": 0,
           "min": 0,
           "max": 100
