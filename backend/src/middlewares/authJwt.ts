@@ -1,3 +1,4 @@
+import express from 'express';
 import jwt from "jsonwebtoken";
 import { AUTH_CONFIG } from "../config";
 import { DB } from '../models/index';
@@ -5,7 +6,8 @@ const User = DB.User;
 const Role = DB.Role;
 const ROLES = DB.ROLES;
 
-const AUTH_SECRET = process.env.AUTH_SECRET || AUTH_CONFIG.SECRET;
+const AUTH_SECRET_ACCESS = process.env.AUTH_SECRET_ACCESS || AUTH_CONFIG.SECRET_ACCESS;
+const AUTH_SECRET_REFRESH = process.env.AUTH_SECRET_REFRESH || AUTH_CONFIG.SECRET_REFRESH;
 
 const verifyToken = (req, res, next) => {
     let token = req.headers["x-access-token"];
@@ -15,7 +17,7 @@ const verifyToken = (req, res, next) => {
         return;
     }
 
-    jwt.verify(token, AUTH_SECRET, (err, decoded) => {
+    jwt.verify(token, AUTH_SECRET_ACCESS, (err, decoded) => {
         if (err) {
             res.status(401).send({message: "Unauthorized!"});
             return;
@@ -23,6 +25,28 @@ const verifyToken = (req, res, next) => {
         req.userId = decoded.id;
         next();
     });
+};
+
+const verifyRefreshToken = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    console.log("cookies: ", JSON.stringify(req.cookies));
+    if (req.cookies?.jwt) {
+        // retrieve the refresh token
+        const refreshToken = req.cookies.jwt;
+
+        console.log("refresh token: ", refreshToken);
+
+        // verify the refresh token
+        jwt.verify(refreshToken, AUTH_SECRET_REFRESH, (err: jwt.VerifyErrors, decoded) => {
+            if (err) {
+                res.status(401).send({message: "Unauthorized!"});
+                return;
+            }
+            req.body.userId = decoded.id;
+            next();
+        });
+    } else {
+        res.status(401).send({message: "Unauthorized!"});
+    }
 };
 
 const verifyAccessRights = (role) => {
@@ -57,5 +81,6 @@ const verifyAccessRights = (role) => {
 
 export const authJwt = {
     verifyToken,
-    verifyAccessRights
+    verifyRefreshToken,
+    verifyAccessRights,
 }

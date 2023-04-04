@@ -1,7 +1,9 @@
+import express from 'express';
 import { authController } from "../controllers/authController";
 import { verifyRegister } from "../middlewares/verifyRegister";
+import { authJwt } from '../middlewares/authJwt';
 
-export function authRoutes(app) {
+export function authRoutes(app: express.Express) {
     app.use(function(req,res,next) {
         res.header(
             "Access-Control-Allow-Headers",
@@ -22,5 +24,13 @@ export function authRoutes(app) {
     app.post(
         "/api/auth/login",
         authController.login
+    )
+
+    app.post(
+        "/api/auth/refresh",
+        [
+            authJwt.verifyRefreshToken
+        ],
+        authController.refresh
     )
 }

@@ -56,7 +56,8 @@ services:
       - DB_USERPASSWORD=HighlyConfidentialPassword
       - AXIOS_URL=http://192.168.2.120:8087 # if using a VPN connection, the adress of the iobroker peer
       - WEBSOCKET_URL=http://192.168.2.120:8084 # if using a VPN connection, the adress of the iobroker peer
-      - AUTH_SECRET=secured-smart-home
+      - AUTH_SECRET_ACCESS=secured-smart-home-access
+      - AUTH_SECRET_REFRESH=secured-smart-home-refresh
       - CORS_ORIGIN=https://192.168.2.121:54000 # the frontend address # set to http:// if HTTPS=false
     volumes:
       - ./ssl_certificate:/app/ssl_certificate

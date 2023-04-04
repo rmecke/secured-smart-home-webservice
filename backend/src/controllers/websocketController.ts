@@ -3,7 +3,8 @@ import jwt from "jsonwebtoken";
 import { AUTH_CONFIG } from '../config';
 
 var wsClients = [];
-const AUTH_SECRET = process.env.AUTH_SECRET || AUTH_CONFIG.SECRET;
+const AUTH_SECRET_ACCESS = process.env.AUTH_SECRET_ACCESS || AUTH_CONFIG.SECRET_ACCESS;
+const AUTH_SECRET_REFRESH = process.env.AUTH_SECRET_REFRESH || AUTH_CONFIG.SECRET_REFRESH;
 
 /**
  * Check if jwt token of client is valid. If not, close the websocket connection.
@@ -12,9 +13,9 @@ const AUTH_SECRET = process.env.AUTH_SECRET || AUTH_CONFIG.SECRET;
  */
 const onConnection = (ws, req) => {
     var token: any = url.parse(req.url,true).query.token;
-    console.log("connection established",req);
+    console.log("connection established",token);
 
-    jwt.verify(token, AUTH_SECRET, (err, decoded) => {
+    jwt.verify(token, AUTH_SECRET_ACCESS, (err, decoded) => {
         if (err) {
             ws.close();
             return;
@@ -34,9 +35,10 @@ const onConnection = (ws, req) => {
  */
 const sendDevicesUpdate = (roomId, devices) => {
     for (const [token, client] of Object.entries(wsClients)) {
-        jwt.verify(token, AUTH_SECRET, (err, decoded) => {
+        console.log("sendDevicesUpdate:token:"+token);
+        jwt.verify(token, AUTH_SECRET_ACCESS, (err, decoded) => {
             if (err) {
-                client.send("Error: Token expired.");
+                client.send(JSON.stringify({type:"authError", message: "Token expired."}));
                 client.close();
             } else {
                 client.send(JSON.stringify({type:"devicesUpdate", roomId: roomId, devices:devices}));

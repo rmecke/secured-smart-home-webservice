@@ -15,6 +15,7 @@ const index_1 = require("./models/index");
 const homeRoutes_1 = require("./routes/homeRoutes");
 const ws_1 = __importDefault(require("ws"));
 const websocketController_1 = require("./controllers/websocketController");
+const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const User = index_1.DB.User;
 const Role = index_1.DB.Role;
 const ROLES = index_1.DB.ROLES;
@@ -72,7 +73,7 @@ function initial() {
 }
 // Create the REST API
 var app = (0, express_1.default)();
-var whitelist = ["http://localhost:54000", "https://localhost:54000", CORS_ORIGIN];
+var whitelist = ["http://localhost:54000", "https://localhost:54000", "http://localhost:3000", "https://localhost:3000", CORS_ORIGIN];
 var corsOptions = {
     origin(requestOrigin, callback) {
         if (whitelist.indexOf(requestOrigin) !== -1) {
@@ -82,10 +83,12 @@ var corsOptions = {
             callback(new Error(`Origin ${requestOrigin} not allowed by CORS.`));
         }
     },
+    credentials: true
 };
 app.use((0, cors_1.default)(corsOptions));
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
+app.use((0, cookie_parser_1.default)());
 app.get("/", (req, res) => {
     res.json({ message: "Welcome to the Secured Smart Home!" });
 });

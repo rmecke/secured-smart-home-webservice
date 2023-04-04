@@ -32,3 +32,6 @@
 
 29.03.2023
 - Changed device toggle option to be visible only, if toggle property for a device is defined.
+
+04.04.2023
+- Added refresh token integration to API.

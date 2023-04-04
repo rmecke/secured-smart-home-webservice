@@ -1,7 +1,8 @@
 // Only for development. 
-// For production please use environment variables: AUTH_SECRET
+// For production please use environment variables: AUTH_SECRET_ACCESS, AUTH_SECRET_REFRESH
 export const AUTH_CONFIG = {
-    SECRET: "secured-smart-home"
+    SECRET_ACCESS: "secured-smart-home-access",
+    SECRET_REFRESH: "secured-smart-home-refresh"
 }
 
 // Only for development. 
@@ -21,7 +22,7 @@ export const DB_CONFIG = {
 // Only for development. 
 // For production please use environment variables: CORS_ORIGIN
 export const CORS_CONFIG = {
-    ORIGIN: "http://localhost:3000"
+    ORIGIN: undefined //"http://localhost:3000"
 }
 
 // Only for development. 

@@ -13,6 +13,7 @@ import url from 'url';
 import jwt from "jsonwebtoken";
 import Websocket from 'ws';
 import { websocketController } from './controllers/websocketController';
+import cookieparser from "cookie-parser";
 
 const User = DB.User;
 const Role = DB.Role;
@@ -77,9 +78,9 @@ function initial() {
 }
 
 // Create the REST API
-var app = express();
+var app: express.Express = express();
 
-var whitelist = ["http://localhost:54000","https://localhost:54000",CORS_ORIGIN];
+var whitelist = ["http://localhost:54000","https://localhost:54000","http://localhost:3000","https://localhost:3000",CORS_ORIGIN];
 var corsOptions: cors.CorsOptions = {
     origin(requestOrigin, callback) {
         if (whitelist.indexOf(requestOrigin) !== -1) {
@@ -88,11 +89,13 @@ var corsOptions: cors.CorsOptions = {
             callback(new Error(`Origin ${requestOrigin} not allowed by CORS.`));
         }
     },
+    credentials: true
 }
 app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
+app.use(cookieparser());
 app.get("/", (req,res) => {
     res.json({ message: "Welcome to the Secured Smart Home!"});
 })

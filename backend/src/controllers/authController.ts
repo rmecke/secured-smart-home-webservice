@@ -1,3 +1,4 @@
+import express from 'express';
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { AUTH_CONFIG } from "../config";
@@ -6,8 +7,10 @@ const User = DB.User;
 const Role = DB.Role;
 const ROLES = DB.ROLES;
 
-const AUTH_SECRET = process.env.AUTH_SECRET || AUTH_CONFIG.SECRET;
-console.log("AUTH_SECRET: "+AUTH_SECRET);
+const AUTH_SECRET_ACCESS = process.env.AUTH_SECRET_ACCESS || AUTH_CONFIG.SECRET_ACCESS;
+const AUTH_SECRET_REFRESH = process.env.AUTH_SECRET_REFRESH || AUTH_CONFIG.SECRET_REFRESH;
+console.log("AUTH_SECRET_ACCESS: "+AUTH_SECRET_ACCESS);
+console.log("AUTH_SECRET_REFRESH: "+AUTH_SECRET_REFRESH);
 
 const register = async (req, res) => {
     if (!req.body.username && !req.body.password) {
@@ -82,7 +85,7 @@ const register = async (req, res) => {
     })
 }
 
-const login = (req, res) => {
+const login = (req: express.Request, res: express.Response) => {
     User.findOne(
         {
             username: req.body.username
@@ -107,12 +110,21 @@ const login = (req, res) => {
             return;
         }
 
-        var token = jwt.sign({id: user.id}, AUTH_SECRET, {
+        // create the access token
+        var accessToken = jwt.sign({id: user.id}, AUTH_SECRET_ACCESS, {
+            expiresIn: "10m" // 10 minutes
+        })
+
+        // create the refresh token, longer time span
+        var refreshToken = jwt.sign({id: user.id}, AUTH_SECRET_REFRESH, {
             expiresIn: "1d" // 24 hours
         })
 
-        var authorities = [];
+        // assign refresh token in http-only cookie
+        res.cookie("jwt",refreshToken,{httpOnly: true, secure: false, sameSite: 'strict', maxAge: 24 * 60 * 60 * 1000});
 
+        // retrieve roles and send them back
+        var authorities = [];
         await Role.find({
                 _id: { $in: user.roles }
         }).then((roles) =>{
@@ -126,13 +138,61 @@ const login = (req, res) => {
                     return;
                 }
         })
-        
 
         res.status(200).send({
             id: user._id,
             username: user.username,
             roles: authorities,
-            accessToken: token
+            accessToken: accessToken
+        })
+
+    })
+    .catch((err) => {
+        if (err) {
+            res.status(500).send({message: err});
+            return;
+        }
+    })
+}
+
+const refresh = (req: express.Request, res: express.Response) => {
+    User.findOne(
+        {
+            _id: req.body.userId
+        }
+    ).populate("roles","-__v")
+    .exec()
+    .then(async (user) => {
+        if (!user) {
+            return res.status(404).send({message: "User not found."});
+        }
+
+        // create the access token
+        var accessToken = jwt.sign({id: user.id}, AUTH_SECRET_ACCESS, {
+            expiresIn: "10m" // 10 minutes
+        })
+
+        // retrieve roles and send them back
+        var authorities = [];
+        await Role.find({
+                _id: { $in: user.roles }
+        }).then((roles) =>{
+                let names = roles.map((role) => role.name);
+                for (let i=0; i<names.length; i++) {
+                    authorities.push(`ROLE_${names[i].toUpperCase()}`);
+                }
+        }).catch((err) => {
+                if (err) {
+                    res.status(500).send({message: err});
+                    return;
+                }
+        })
+
+        res.status(200).send({
+            id: user._id,
+            username: user.username,
+            roles: authorities,
+            accessToken: accessToken
         })
 
     })
@@ -146,5 +206,6 @@ const login = (req, res) => {
 
 export const authController = {
     register,
-    login
+    login,
+    refresh
 }
