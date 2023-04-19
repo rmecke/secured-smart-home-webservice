@@ -27,12 +27,22 @@ export class Header extends Component {
   };
 
   render() {
+    let userManagement;
+    if (this.props.auth && this.props.auth.isLoggedIn && this.props.auth.user && this.props.auth.user.roles.includes("ROLE_ADMIN")) {
+      userManagement = <>
+        <NavigationItem>
+          <NavLink to="/users">Nutzer</NavLink>
+        </NavigationItem>
+      </>
+    }
+
     let authActions = null;
     if (this.props.auth && this.props.auth.isLoggedIn && this.props.auth.user) {
       authActions = <>
         <NavigationItem>
           <NavLink to="/">Räume</NavLink>
         </NavigationItem>
+        {userManagement}
         <NavigationItem>
             <NavLink to="" onClick={this.onLogoutClickHandler}>Logout</NavLink>
         </NavigationItem>

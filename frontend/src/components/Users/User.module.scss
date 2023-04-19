@@ -1,0 +1,45 @@
+@import "../../styles/utils/utils";
+
+.User {
+  border-radius: 6px;
+  padding: 30px 20px;
+  box-shadow: 0 2px 12px 0 $LIGHT_SHADOW;
+  box-sizing: border-box;
+  color: #000;
+
+  .Header {
+    display: flex;
+  }
+
+  .Title {
+    font-weight: bold;
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+  }
+
+  .Icon {
+    margin-left: auto;
+    font-size: 8rem;
+    color: #00bcd4;
+
+    @include tablet-view {
+      font-size: 5rem;
+    }
+
+    @include mobile-view {
+      font-size: 4rem;
+    }
+  }
+
+  .RoleContainer{
+    border: 1px solid #EEE;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    border-radius: 6px;
+  }
+
+  .Switch {
+    margin-left: auto;
+  }
+}

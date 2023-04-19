@@ -8,6 +8,7 @@ import { authRoutes } from './routes/authRoutes';
 import { contentRoutes } from './routes/contentRoutes';
 import { DB } from './models/index';
 import { homeRoutes } from './routes/homeRoutes';
+import { adminRoutes } from './routes/adminRoutes';
 import { ConnectOptions } from 'mongoose';
 import url from 'url';
 import jwt from "jsonwebtoken";
@@ -103,6 +104,7 @@ app.get("/", (req,res) => {
 authRoutes(app);
 contentRoutes(app);
 homeRoutes(app);
+adminRoutes(app);
 
 let expressServer;
 

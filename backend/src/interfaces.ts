@@ -121,3 +121,9 @@ export interface IDatapoint {
      */
     controlKey?: string,
 }
+
+export interface IUser {
+    _id: string,
+    username: string,
+    roles: Array<string>
+}

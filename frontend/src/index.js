@@ -14,6 +14,7 @@ import fontawesomeIcons from "./utils/fontawesome.icons";
 import App from "./App";
 
 import "./styles/style.scss";
+import usersReducers from "./store/users/users.reducers";
 
 /**
  * Supported Fontawesome Icons for Offline usage
@@ -33,6 +34,7 @@ const rootReduce = combineReducers({
   devices: devicesReducers,
   ui: uiReducers,
   auth: authReducers,
+  users: usersReducers,
 });
 
 // Create the Redux store

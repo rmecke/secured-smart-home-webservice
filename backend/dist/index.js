@@ -13,6 +13,7 @@ const authRoutes_1 = require("./routes/authRoutes");
 const contentRoutes_1 = require("./routes/contentRoutes");
 const index_1 = require("./models/index");
 const homeRoutes_1 = require("./routes/homeRoutes");
+const adminRoutes_1 = require("./routes/adminRoutes");
 const ws_1 = __importDefault(require("ws"));
 const websocketController_1 = require("./controllers/websocketController");
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
@@ -95,6 +96,7 @@ app.get("/", (req, res) => {
 (0, authRoutes_1.authRoutes)(app);
 (0, contentRoutes_1.contentRoutes)(app);
 (0, homeRoutes_1.homeRoutes)(app);
+(0, adminRoutes_1.adminRoutes)(app);
 let expressServer;
 if (HTTPS) {
     let keyFilePath = "../ssl_certificate/key.pem";

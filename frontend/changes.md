@@ -35,3 +35,6 @@
 
 04.04.2023
 - Added refresh token integration to API.
+
+19.04.2023
+- Added UsersDashboard with role management options.

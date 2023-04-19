@@ -8,6 +8,7 @@ import RoomsDashboard from "./containers/RoomsDashboard/RoomsDashboard";
 import asyncComponent from "./hoc/asyncComponent/asyncComponent";
 import Login from "./containers/Auth/Login/Login";
 import Register from "./containers/Auth/Register/Register";
+import UsersDashboard from "./containers/UsersDashboard/UsersDashboard";
 
 function App() {
   const AsyncRoomsDevices = asyncComponent(() =>
@@ -21,6 +22,7 @@ function App() {
         <Route path="/register" exact component={Register} />
         <Guard>
           <Route path="/" exact component={RoomsDashboard} />
+          <Route path="/users" exact component={UsersDashboard} />
           <Route path="/room/:id" exact component={AsyncRoomsDevices} />
         </Guard>
       </Switch>
