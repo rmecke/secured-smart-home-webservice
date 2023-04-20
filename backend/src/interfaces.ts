@@ -127,3 +127,12 @@ export interface IUser {
     username: string,
     roles: Array<string>
 }
+
+import mongoose from "mongoose";
+export interface IDatabase {
+    mongoose?: typeof mongoose,
+    User?: mongoose.Model<any, {}, {}, {}, any, any>,
+    Role?: mongoose.Model<any, {}, {}, {}, any, any>,
+    Log?: mongoose.Model<any, {}, {}, {}, any, any>, 
+    ROLES?: string[],
+}

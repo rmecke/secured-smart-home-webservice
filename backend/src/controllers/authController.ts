@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { AUTH_CONFIG } from "../config";
 import { DB } from '../models/index';
+import { LogLevel, loggingController } from './loggingController';
 const User = DB.User;
 const Role = DB.Role;
 const ROLES = DB.ROLES;
@@ -40,7 +41,7 @@ const register = async (req, res) => {
     user.save()
     .then((user) => {
         // Add the user to database
-        if (req.body.roles) {
+        /*if (req.body.roles) {
             Role.find(
                 {
                     name: { $in: req.body.roles }
@@ -59,7 +60,7 @@ const register = async (req, res) => {
                     res.status(500).send({message: err});
                     return;
                 })
-        } else {
+        } else */{
             Role.findOne({
                     name: "guest"
             }).then((role) => {
@@ -138,6 +139,8 @@ const login = (req: express.Request, res: express.Response) => {
                     return;
                 }
         })
+
+        loggingController.createLog(Date.now(),user._id, LogLevel.INFO,`User logged in`);
 
         res.status(200).send({
             id: user._id,

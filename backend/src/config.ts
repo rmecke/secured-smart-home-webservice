@@ -1,4 +1,7 @@
 // Only for development. 
+
+import { LogLevel } from "./controllers/loggingController"
+
 // For production please use environment variables: AUTH_SECRET_ACCESS, AUTH_SECRET_REFRESH
 export const AUTH_CONFIG = {
     SECRET_ACCESS: "secured-smart-home-access",
@@ -35,4 +38,10 @@ export const HTTPS_CONFIG = {
 // For production please use environment variables: WEBSOCKET_URL
 export const WEBSOCKET_CONFIG = {
     URL: "http://192.168.2.120:8084"
+}
+
+// Only for development. 
+// For production please use environment variables: LOGGING_LVL
+export const LOGGIN_CONFIG = {
+    LVL: "DEBUG"
 }

@@ -59,6 +59,7 @@ services:
       - AUTH_SECRET_ACCESS=secured-smart-home-access
       - AUTH_SECRET_REFRESH=secured-smart-home-refresh
       - CORS_ORIGIN=https://192.168.2.121:54000 # the frontend address # set to http:// if HTTPS=false
+      - LOGGING_LVL=DEBUG
     volumes:
       - ./ssl_certificate:/app/ssl_certificate
     depends_on:
