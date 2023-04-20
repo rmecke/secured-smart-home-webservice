@@ -5,9 +5,13 @@ import {
 
   TOGGLE_ROLE_SWITCH_START,
   TOGGLE_ROLE_SWITCH_SUCCESS,
-  TOGGLE_ROLE_SWITCH_FAILED
+  TOGGLE_ROLE_SWITCH_FAILED,
+
+  DELETE_USER_START,
+  DELETE_USER_SUCCESS,
+  DELETE_USER_FAILED
 } from "../users/users.actiontypes"
-import { getUsersApi, toggleRoleSwitchApi } from "../../utils/api/admin.api";
+import { getUsersApi, toggleRoleSwitchApi, deleteUserApi } from "../../utils/api/admin.api";
 import { showErrorModal } from "../ui/ui.actions";
 import { logout } from "../auth/auth.actions";
 
@@ -100,6 +104,53 @@ export const toggleRoleSwitchSuccess = user => ({
 
 export const toggleRoleSwitchFailed = error => ({
   type: TOGGLE_ROLE_SWITCH_FAILED,
+  payload: {
+    error
+  }
+});
+
+export const deleteUser = userId => dispatch => {
+  dispatch(toggleRoleSwitchStart());
+
+  const payload = {
+    userId: userId,
+  };
+
+  deleteUserApi(payload)
+    .then(response => dispatch(deleteUserSuccess(response.data.userId)))
+    .catch(error => {
+      if (error.response.status === 401) {
+        dispatch(logout());
+        const errorResponse = {
+          message: "Dein Zugriff ist abgelaufen, bitte logge dich erneut ein."
+        };
+        dispatch(showErrorModal(errorResponse))
+        return;
+      }
+
+      // This to mock an error response
+      const errorResponse = {
+        message: "Fehler beim Löschen des Benutzers."
+      };
+
+      dispatch(deleteUserFailed(errorResponse));
+      dispatch(showErrorModal(errorResponse))
+    });
+};
+
+export const deleteUserStart = () => ({
+  type: DELETE_USER_START
+});
+
+export const deleteUserSuccess = userId => ({
+  type: DELETE_USER_SUCCESS,
+  payload: {
+    userId: userId
+  }
+});
+
+export const deleteUserFailed = error => ({
+  type: DELETE_USER_FAILED,
   payload: {
     error
   }

@@ -4,7 +4,10 @@ import {
   FETCH_USERS_FAILED,
   TOGGLE_ROLE_SWITCH_START,
   TOGGLE_ROLE_SWITCH_SUCCESS,
-  TOGGLE_ROLE_SWITCH_FAILED
+  TOGGLE_ROLE_SWITCH_FAILED,
+  DELETE_USER_START,
+  DELETE_USER_SUCCESS,
+  DELETE_USER_FAILED
 } from "./users.actiontypes";
 
 const initialState = {
@@ -37,6 +40,20 @@ export default (state = initialState, { type, payload }) => {
         users: usersCopy
       };
     case TOGGLE_ROLE_SWITCH_FAILED:
+      return { ...state };
+
+    case DELETE_USER_START:
+      return { ...state };
+    case DELETE_USER_SUCCESS:
+      let usersCopy2 = [...state.users];
+      let index = usersCopy2.findIndex((x) => {return x._id == payload.userId});
+      usersCopy2.splice(index,1);
+      
+      return {
+        ...state,
+        users: usersCopy2
+      };
+    case DELETE_USER_FAILED:
       return { ...state };
 
     default:

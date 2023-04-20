@@ -38,3 +38,7 @@
 
 19.04.2023
 - Added UsersDashboard with role management options.
+
+20.04.2023
+- Added an optional apply button to Modal.
+- Added delete option in UsersDashboard.

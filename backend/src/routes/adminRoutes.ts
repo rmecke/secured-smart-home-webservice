@@ -13,5 +13,7 @@ export function adminRoutes(app) {
 
     app.get("/api/admin/users", [authJwt.verifyToken, authJwt.verifyAccessRights("admin")] , adminController.getUsers);
 
+    app.post("/api/admin/users/delete", [authJwt.verifyToken, authJwt.verifyAccessRights("admin")] , adminController.deleteUser);
+
     app.patch("/api/admin/users/switch", [authJwt.verifyToken, authJwt.verifyAccessRights("admin")] , adminController.switchRole);
 }

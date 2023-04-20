@@ -71,6 +71,24 @@ const getUsers = async (req,res) => {
     res.status(200).send({users: polished});
 }
 
+const deleteUser = async (req, res) => {
+    let userId = req.body.userId;
+
+    if (!userId) {
+        res.status(400).send({
+            message: `Failed! No user id provided.`
+        })
+        return;
+    }
+
+    await User.findByIdAndDelete(userId).then(() => {
+        res.status(200).send();
+    }).catch((err) => {
+        res.status(500).send({message: err});
+        return;
+    })
+}
+
 const switchRole = async (req,res) => {
     console.log("/switch: "+JSON.stringify(req.body));
 
@@ -103,5 +121,6 @@ const switchRole = async (req,res) => {
 
 export const adminController = {
     getUsers,
+    deleteUser,
     switchRole
 }

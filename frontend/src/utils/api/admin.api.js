@@ -55,3 +55,42 @@ export const toggleRoleSwitchApi = async payload => {
   
   return new Promise((resolve, reject) => resolve(responseFurther));
 };
+
+export const deleteUserApi = async payload => {
+  let responseFurther;
+
+  await axios.post(`/api/admin/users/delete`,
+    {
+      userId: payload.userId
+    },
+    {
+      headers: {
+        ...authHeader(),
+        'Content-type': 'application/json',
+      } 
+    }
+  )
+  .then(function (response) {
+    // handle success
+    responseFurther = {
+      data: {
+        userId: payload.userId
+      }
+    };
+  })
+  .catch(async function (error) {
+    if (error.response.status === 401) {
+      let data = await refreshAPI();
+      console.log("data.accessToken: " +data.accessToken);
+      if (!data.accessToken) {
+        throw(error);
+      } else {
+        return await deleteUserApi(payload);
+      }
+    } else {
+      throw(error);
+    }
+  });
+  
+  return new Promise((resolve, reject) => resolve(responseFurther));
+};

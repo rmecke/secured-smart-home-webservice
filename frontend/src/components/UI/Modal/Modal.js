@@ -11,13 +11,19 @@ function Modal(props) {
     modalClasses.push(classes.Show);
   }
 
+  let applyButton;
+  if (props.onApplyModal) {
+    applyButton = (<Button className={classes.Btn} onClick={props.onApplyModal}>Bestätigen</Button>);
+  }
+
   return (
     <Fragment>
       <Backdrop show={props.show} onClick={props.onCloseModal} />
       <div data-test="modal-body" className={modalClasses.join(" ")}>
         <div>{props.children}</div>
         <div className={classes.BtnContainer}>
-          <Button onClick={props.onCloseModal}>Close</Button>
+          {applyButton}
+          <Button className={classes.Btn} onClick={props.onCloseModal}>Schließen</Button>
         </div>
       </div>
     </Fragment>
@@ -26,7 +32,8 @@ function Modal(props) {
 
 Modal.propTypes = {
   show: PropTypes.bool,
-  onCloseModal: PropTypes.func
+  onCloseModal: PropTypes.func,
+  onApplyModal: PropTypes.func
 };
 
 export default Modal;

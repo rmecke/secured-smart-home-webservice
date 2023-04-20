@@ -13,6 +13,7 @@
   box-sizing: border-box;
   transition: opacity 0.3s ease-out;
   z-index: -1000;
+  text-align: center;
 
   &.Show {
     opacity: 1;
@@ -21,6 +22,12 @@
 
   .BtnContainer {
     text-align: center;
+    margin-top: 10px;
+  }
+
+  .Btn {
+    margin-left: 5px;
+    margin-right: 5px;
   }
 }
 

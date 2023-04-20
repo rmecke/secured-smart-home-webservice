@@ -3,7 +3,8 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { 
   fetchUsers,
-  toggleRoleSwitch
+  toggleRoleSwitch,
+  deleteUser
 } from "../../store/users/users.actions";
 import User from "../../components/Users/User";
 
@@ -22,8 +23,11 @@ export class UsersDashboard extends Component {
   }
 
   onToggleRoleSwitchHandler = (userId, roleId, newValue) => {
-    console.log("onToggleRoleSwitchHandler");
     this.props.toggleRoleSwitch({userId, roleId, newValue});
+  };
+
+  onDeleteHandler = (userId) => {
+    this.props.deleteUser(userId);
   };
 
   render() {
@@ -44,6 +48,7 @@ export class UsersDashboard extends Component {
                 icon={userData.icon}
                 roles={userData.roles}
                 onToggleRoleSwitch={this.onToggleRoleSwitchHandler}
+                onDelete={this.onDeleteHandler}
               />
             </div>
           );
@@ -59,7 +64,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   fetchUsers,
-  toggleRoleSwitch
+  toggleRoleSwitch,
+  deleteUser
 };
 
 export default connect(
