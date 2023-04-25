@@ -3,7 +3,10 @@
 
 // Adaption for usage with Secured Smart Home by Robert Mecke
 
+import { readFileSync } from 'fs';
 import * as io from 'socket.io-client';
+import fs from 'fs';
+import path from 'path';
 
 export class IoBrokerSocket {
     _socket =            null;
@@ -182,16 +185,39 @@ export class IoBrokerSocket {
         connOptions.socketSession = connOptions.socketSession || 'nokey';
 
         var url = connLink;
+        console.log("url:",url);
+        console.log("key:",connOptions.socketSession);
+
+        // Get self signed cert
+        let keyFile = undefined;
+        let crtFilePath = "../../ssl_certificate/iobroker_cert.pem";
+        let crtFileExists = fs.existsSync(path.resolve(__dirname, crtFilePath));
+        if (!crtFileExists) {
+            // If not found, try a folder above
+            crtFilePath = "../../../ssl_certificate/iobroker_cert.pem";
+            crtFileExists = fs.existsSync(path.resolve(__dirname, crtFilePath));
+        }
+        if (crtFileExists) {   
+            keyFile = readFileSync(path.resolve(__dirname, crtFilePath));
+        }
 
         this._socket = io.connect(url, {
-            query:                          'key=' + connOptions.socketSession,
-            'reconnection limit':           10000,
-            'max reconnection attempts':    Infinity,
+            query: {
+                key: connOptions.socketSession
+            },
             reconnection:                   false,
-            upgrade:                        !connOptions.socketForceWebSockets,
-            rememberUpgrade:                connOptions.socketForceWebSockets,
-            transports:                     connOptions.socketForceWebSockets ? ['websocket'] : undefined
+            upgrade:                        false,
+            rememberUpgrade:                false,
+            transports:                     undefined,
+            secure:                         true,
+            withCredentials:                true,
+            ca:                             keyFile,
+            rejectUnauthorized:             false
         });
+
+        this._socket.on("connect_error", (err) => {
+            console.log(`connect_error due to ${err.message}`);
+          });
 
         this._socket.on('connect', function () {
             if (that._disconnectedSince) {

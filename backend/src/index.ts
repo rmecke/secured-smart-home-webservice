@@ -123,8 +123,8 @@ if (HTTPS) {
     }
 
     if (keyFileExists && crtFileExists) {   
-        let keyFile = fs.readFileSync(path.resolve(__dirname, "../ssl_certificate/key.pem"));
-        let crtFile = fs.readFileSync(path.resolve(__dirname, "../ssl_certificate/crt.pem"));
+        let keyFile = fs.readFileSync(path.resolve(__dirname, keyFilePath));
+        let crtFile = fs.readFileSync(path.resolve(__dirname, crtFilePath));
 
         expressServer = https.createServer({
                 key: keyFile,

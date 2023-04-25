@@ -11,7 +11,7 @@ export const AUTH_CONFIG = {
 // Only for development. 
 // For production please use environment variables: AXIOS_URL
 export const AXIOS_CONFIG = {
-    URL: "http://192.168.2.120:8087"
+    URL: "https://192.168.2.120:8087"
 }
 
 // Only for development. 
@@ -37,7 +37,7 @@ export const HTTPS_CONFIG = {
 // Only for development. 
 // For production please use environment variables: WEBSOCKET_URL
 export const WEBSOCKET_CONFIG = {
-    URL: "http://192.168.2.120:8084"
+    URL: "https://192.168.2.120:8084"
 }
 
 // Only for development. 
