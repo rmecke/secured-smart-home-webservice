@@ -21,12 +21,14 @@ const register = async (req, res) => {
         return;
     }
 
+    let roles = undefined;
+
     // The first registered user gets all roles
     await User.estimatedDocumentCount()
     .then((count) => {
         if (count === 0) {
             console.log(`First user ${req.body.username} detected. Granting all roles...`)
-            req.body.roles = ROLES;
+            roles = ROLES;
         }
     })
     .catch((err) => {
@@ -41,10 +43,10 @@ const register = async (req, res) => {
     user.save()
     .then((user) => {
         // Add the user to database
-        /*if (req.body.roles) {
+        if (roles) {
             Role.find(
                 {
-                    name: { $in: req.body.roles }
+                    name: { $in: roles }
                 }).then((roles) => {
                     user.roles = roles.map((role) => role._id);
                     user.save()
@@ -60,7 +62,7 @@ const register = async (req, res) => {
                     res.status(500).send({message: err});
                     return;
                 })
-        } else */{
+        } else {
             Role.findOne({
                     name: "guest"
             }).then((role) => {
