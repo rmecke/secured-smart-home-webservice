@@ -10,7 +10,7 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Europe/London
-      - SERVERURL=45.9.62.111 #optional
+      - SERVERURL=secured-smart-home.de #optional, to be updated
       - SERVERPORT=51820 #optional
       - PEERS=3 #optional
       - PEERDNS=auto #optional
@@ -35,11 +35,12 @@ services:
     container_name: webservice-frontend
     environment:
       - HTTPS=true
-      - SSL_KEY_FILE=./ssl_certificate/key.pem
-      - SSL_CRT_FILE=./ssl_certificate/crt.pem
-      - REACT_APP_AXIOS_URL=https://192.168.2.121:54001 # set to http:// if HTTPS=false
+      - SSL_KEY_FILE=./../ssl_certificate/key.pem
+      - SSL_CRT_FILE=./../ssl_certificate/crt.pem
+      - REACT_APP_AXIOS_URL=https://secured-smart-home.de:54001 # set to http:// if HTTPS=false
     volumes:
-      - ./ssl_certificate:/app/ssl_certificate
+      - ./ssl_certificate:/ssl_certificate
+      - ./logs:/logs
     depends_on:
       - wireguard
     network_mode: container:webservice-wireguard
@@ -54,14 +55,15 @@ services:
       - DB_NAME=secured_smart_home
       - DB_USERNAME=admin
       - DB_USERPASSWORD=HighlyConfidentialPassword
-      - AXIOS_URL=http://192.168.2.120:8087 # if using a VPN connection, the adress of the iobroker peer
-      - WEBSOCKET_URL=http://192.168.2.120:8084 # if using a VPN connection, the adress of the iobroker peer
+      - AXIOS_URL=https://10.13.13.2:8087 # if using a VPN connection, the adress of the iobroker peer
+      - WEBSOCKET_URL=https://10.13.13.2:8084 # if using a VPN connection, the adress of the iobroker peer
       - AUTH_SECRET_ACCESS=secured-smart-home-access
       - AUTH_SECRET_REFRESH=secured-smart-home-refresh
-      - CORS_ORIGIN=https://192.168.2.121:54000 # the frontend address # set to http:// if HTTPS=false
+      - CORS_ORIGIN=https://secured-smart-home.de:54000 # the frontend address # set to http:// if HTTPS=false
       - LOGGING_LVL=DEBUG
     volumes:
-      - ./ssl_certificate:/app/ssl_certificate
+      - ./ssl_certificate:/ssl_certificate
+      - ./logs:/logs
     depends_on:
       - wireguard
       - database

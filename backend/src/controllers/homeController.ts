@@ -6,6 +6,7 @@ import { IoBrokerSocket } from '../utils/iobroker';
 import axios from "../utils/axios";
 import { IControl, IDatapoint, IDevice, IRoom } from 'src/interfaces';
 import { websocketController } from './websocketController';
+import { LogLevel, loggingController } from './loggingController';
 
 const WEBSOCKET_URL = process.env.WEBSOCKET_URL || WEBSOCKET_CONFIG.URL;
 
@@ -31,7 +32,7 @@ async function retrieveRoomData() {
         let index = allDatapoints.findIndex((x) => {return x.id == id});
 
         if (index >= 0) {
-            console.log(`\x1b[36m${id}\x1b[0m: ${state.val}`);
+            loggingController.createLog(undefined, LogLevel.DEBUG,`Datapoint ${id} updated to ${state.val}.`);
 
             if (allDatapoints[index].controlKey) {
                 let node: IControl = roomsRoot["rooms"][allDatapoints[index].roomKey]["devices"][allDatapoints[index].deviceKey]["controls"][allDatapoints[index].controlKey];
@@ -59,10 +60,10 @@ async function retrieveRoomData() {
     // Waiting logic to ensure, that the connection is established before making requests to iobroker
     while(!iobroker.getIsConnected()) {
         // Loop until socket is connected
-        console.log("Checking websocket connection...");
+        loggingController.createLog(undefined, LogLevel.DEBUG,`Checking WebSocket connection...`);
         await delay(1000);
     }
-    console.log("Websocket connected: ", iobroker.getIsConnected());
+    loggingController.createLog(undefined, LogLevel.DEBUG,`Websocket connected: ${iobroker.getIsConnected()}`);
     
     // Next, we read out the room configuration from the data-folder
     let roomsFile = fs.readFileSync(path.resolve(__dirname, "../../data/rooms.json"));
@@ -100,7 +101,7 @@ async function retrieveDeviceValues(device,roomKey,deviceKey) {
             }
 
             device.switch = states[device.datapoint].val;
-            console.log(`\x1b[36m${device.datapoint}\x1b[0m: ${device.switch}`);
+            loggingController.createLog(undefined, LogLevel.DEBUG,`Datapoint ${device.datapoint}'s initial value is ${device.switch}.`);
         })
 
         /*await axios.get(`/getPlainValue/${device.datapoint}`)
@@ -127,13 +128,13 @@ async function retrieveDeviceValues(device,roomKey,deviceKey) {
 
                 iobroker.getStates([control.datapoint], (error,states) => {
                     if (error) {
-                        console.error("Error retrieving data point",control.datapoint,error);
+                        loggingController.createLog(undefined, LogLevel.ERROR,`Error retrieving datapoint ${control.datapoint}.`);
                         return;
                     }
 
                     if (states[control.datapoint]) {
                         control.value = states[control.datapoint].val;
-                        console.log(`\x1b[36m${control.datapoint}\x1b[0m: ${control.value}`);
+                        loggingController.createLog(undefined, LogLevel.DEBUG,`Datapoint ${control.datapoint}'s initial value is ${control.value}.`);
                     } else {
                         console.log(`\x1b[36m${control.datapoint}\x1b[0m: \x1b[31mN/A\x1b[0m`)
                     }
@@ -154,16 +155,16 @@ async function retrieveDeviceValues(device,roomKey,deviceKey) {
 }
 
 const getRooms = (req,res) => {
+    loggingController.createLog(req.userId, LogLevel.INFO,`Rooms requested.`);
     res.status(200).send(roomsRoot);
 }
 
 const getDevices = (req,res) => {
+    loggingController.createLog(req.userId, LogLevel.INFO,`Devices for room ${req.params.id} requested.`);
     res.status(200).send(roomsRoot["rooms"][req.params.id]);
 }
 
 const switchDevice = async (req,res) => {
-    console.log("/switch: "+JSON.stringify(req.body));
-
     let device;
 
     for (var key in roomsRoot["rooms"]) {
@@ -183,6 +184,7 @@ const switchDevice = async (req,res) => {
                 res.status(500).send();
             } else {
                 //device.switch = !device.switch;
+                loggingController.createLog(req.userId, LogLevel.INFO,`Switched value of ${device.datapoint} to ${req.body.device.newValue}.`);
                 res.status(200).send();
             }
         })
@@ -209,8 +211,6 @@ const switchDevice = async (req,res) => {
 }
 
 const updateDevice = async (req,res) => {
-    console.log("/update: "+JSON.stringify(req.body));
-
     let device;
 
     for (var key in roomsRoot["rooms"]) {
@@ -232,6 +232,7 @@ const updateDevice = async (req,res) => {
                     res.status(500).send();
                 } else {
                     //control.value=req.body.control.newValue;
+                    loggingController.createLog(req.userId, LogLevel.INFO,`Changed value of ${control.datapoint} to ${req.body.control.newValue}.`);
                     res.status(200).send();
                 }
             })

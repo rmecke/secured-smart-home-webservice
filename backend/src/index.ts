@@ -109,18 +109,10 @@ adminRoutes(app);
 let expressServer;
 
 if (HTTPS) {
-    let keyFilePath = "../ssl_certificate/key.pem";
-    let crtFilePath = "../ssl_certificate/crt.pem";
+    let keyFilePath = "../../ssl_certificate/key.pem"; // --> directory has been mounted with docker
+    let crtFilePath = "../../ssl_certificate/crt.pem";
     let keyFileExists = fs.existsSync(path.resolve(__dirname, keyFilePath));
     let crtFileExists = fs.existsSync(path.resolve(__dirname, crtFilePath));
-
-    // If not found, try a folder above
-    if (!keyFileExists || !crtFileExists) {
-        keyFilePath = "../../ssl_certificate/key.pem";
-        crtFilePath = "../../ssl_certificate/crt.pem";
-        keyFileExists = fs.existsSync(path.resolve(__dirname, keyFilePath));
-        crtFileExists = fs.existsSync(path.resolve(__dirname, crtFilePath));
-    }
 
     if (keyFileExists && crtFileExists) {   
         let keyFile = fs.readFileSync(path.resolve(__dirname, keyFilePath));

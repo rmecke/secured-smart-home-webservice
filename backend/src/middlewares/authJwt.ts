@@ -33,8 +33,6 @@ const verifyRefreshToken = (req: express.Request, res: express.Response, next: e
         // retrieve the refresh token
         const refreshToken = req.cookies.jwt;
 
-        console.log("refresh token: ", refreshToken);
-
         // verify the refresh token
         jwt.verify(refreshToken, AUTH_SECRET_REFRESH, (err: jwt.VerifyErrors, decoded) => {
             if (err) {

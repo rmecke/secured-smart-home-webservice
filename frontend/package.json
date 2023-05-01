@@ -15,13 +15,15 @@
     "react-scripts": "5.0.1",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
-    "sass": "^1.58.3"
+    "sass": "^1.58.3",
+    "serve": "^14.2.0"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --runInBand",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "prod": "serve -s build --ssl-key ../ssl_certificate/key.pem --ssl-cert ../ssl_certificate/crt.pem"
   },
   "eslintConfig": {
     "extends": "react-app"

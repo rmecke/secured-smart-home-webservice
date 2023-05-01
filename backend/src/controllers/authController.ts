@@ -21,14 +21,13 @@ const register = async (req, res) => {
         return;
     }
 
-    let roles = undefined;
+    let roleNames = undefined;
 
     // The first registered user gets all roles
     await User.estimatedDocumentCount()
     .then((count) => {
         if (count === 0) {
-            console.log(`First user ${req.body.username} detected. Granting all roles...`)
-            roles = ROLES;
+            roleNames = ROLES;
         }
     })
     .catch((err) => {
@@ -43,10 +42,10 @@ const register = async (req, res) => {
     user.save()
     .then((user) => {
         // Add the user to database
-        if (roles) {
+        if (roleNames) {
             Role.find(
                 {
-                    name: { $in: roles }
+                    name: { $in: roleNames }
                 }).then((roles) => {
                     user.roles = roles.map((role) => role._id);
                     user.save()
@@ -54,6 +53,7 @@ const register = async (req, res) => {
                         res.send({message: "User was registered successfully"});
                     })
                     .catch((err) => {
+                        loggingController.createLog(user._id, LogLevel.INFO,`User registered with roles ${roleNames}.`);
                         res.status(500).send({message: err});
                         return;
                     });
@@ -69,6 +69,7 @@ const register = async (req, res) => {
                     user.roles = [role._id];
                     user.save()
                     .then((user) => {
+                        loggingController.createLog(user._id, LogLevel.INFO,`User registered with role "guest".`);
                         res.send({message: "User was registered successfully"});
                     })
                     .catch((err) => {
@@ -142,7 +143,7 @@ const login = (req: express.Request, res: express.Response) => {
                 }
         })
 
-        loggingController.createLog(Date.now(),user._id, LogLevel.INFO,`User logged in`);
+        loggingController.createLog(user._id, LogLevel.INFO,`User logged in. Access and refresh token created.`);
 
         res.status(200).send({
             id: user._id,
@@ -192,6 +193,8 @@ const refresh = (req: express.Request, res: express.Response) => {
                     return;
                 }
         })
+
+        loggingController.createLog(user._id, LogLevel.INFO,`Refresh token created.`);
 
         res.status(200).send({
             id: user._id,

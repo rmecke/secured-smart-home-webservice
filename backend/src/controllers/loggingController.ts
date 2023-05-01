@@ -1,8 +1,10 @@
 import express from 'express';
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import fs from "fs";
 import { AUTH_CONFIG, LOGGIN_CONFIG } from "../config";
 import { DB } from '../models/index';
+import path from 'path';
 const Log = DB.Log;
 
 export enum LogLevel {
@@ -17,17 +19,55 @@ export enum LogLevel {
 const LOGGING_LVL = process.env.L || LOGGIN_CONFIG.LVL;
 const minLvl = LogLevel[LOGGING_LVL];
 
-const createLog = (timestamp: number, user: string, level: LogLevel, message: string) => {
+// Create a new log file
+let logDate = new Date();
+let logDirectory = "../../../logs"; // --> directory has been mounted with docker
+let logFileName = `backend_${("0"+logDate.getDate()).slice(-2)}_${("0"+logDate.getMonth()).slice(-2)}_${logDate.getFullYear()}_${("0"+logDate.getHours()).slice(-2)}_${("0"+logDate.getMinutes()).slice(-2)}_${("0"+logDate.getSeconds()).slice(-2)}`;
+let logFilePath = logDirectory+"/"+logFileName+".txt";
+
+console.log("logFilePath:"+path.resolve(__dirname, logFilePath));
+
+const createLog = (user: string, level: LogLevel, message: string) => {
+    const timestamp: number = Date.now()
+    const dateFormatted = new Date(timestamp).toLocaleString();
+
+    // Write to console
+    const logLine = `${timestamp} | ${dateFormatted} | ${LogLevel[level]} | ${message} | ${user}`;
+    switch (level) {
+        case LogLevel.TRACE:
+            console.trace(`\x1b[90m LoggingController: ${logLine}\x1b[0m`);
+            break;
+        case LogLevel.DEBUG:
+            console.debug(`\x1b[37m LoggingController: ${logLine}\x1b[0m`);
+            break;
+        case LogLevel.INFO:
+            console.info(`\x1b[36m LoggingController: ${logLine}\x1b[0m`);
+            break;
+        case LogLevel.WARN:
+            console.warn(`\x1b[33m LoggingController: ${logLine}\x1b[0m`);
+            break;
+        case LogLevel.ERROR:
+            console.error(`\x1b[41m LoggingController: ${logLine}\x1b[0m`);
+            break;
+        case LogLevel.FATAL:
+            console.error(`\x1b[91m [!] LoggingController [!]: ${logLine}\x1b[0m`);
+            break;
+    }
+
+    // Do the following only, if the log level is high enough
     if (level >= minLvl) {
+        // Write to database
         const log = new Log({
-            level: LogLevel[level],
             timestamp: timestamp,
+            date: dateFormatted,
+            level: LogLevel[level],
+            message: message,
             user: user,
-            message: message
         });
         log.save();
 
-        console.log(`LoggingController: ${LogLevel[level]} | ${user} | ${timestamp}  | ${message}`);
+        // Write to log file
+        fs.writeFileSync(path.resolve(__dirname, logFilePath),logLine+"\n",{flag:"a+"});
     }
 }
 

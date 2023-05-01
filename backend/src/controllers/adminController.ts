@@ -6,6 +6,7 @@ import { IoBrokerSocket } from '../utils/iobroker';
 import axios from "../utils/axios";
 import { IControl, IDatapoint, IDevice, IRoom } from 'src/interfaces';
 import { DB } from '../models/index';
+import { LogLevel, loggingController } from './loggingController';
 const Role = DB.Role;
 const User = DB.User;
 
@@ -27,10 +28,6 @@ const getUsers = async (req,res) => {
 
     // Get all users with their assigned roles
     let users: Array<IUser> = await User.find<IUser>({},"_id username roles").populate("roles", "name").exec();
-
-    console.log("roles: "+JSON.stringify(roles));
-    console.log("users: "+JSON.stringify(users));
-
     
     // Polish the users: Add also the unassigned roles, for later use in frontend
     let polished: Array<IUser> = [];
@@ -66,7 +63,7 @@ const getUsers = async (req,res) => {
         polished.push(polishedUser);
     })
 
-    console.log("polished users: "+JSON.stringify(polished));
+    loggingController.createLog(req.userId, LogLevel.INFO,`Users requested.`);
 
     res.status(200).send({users: polished});
 }
@@ -75,6 +72,7 @@ const deleteUser = async (req, res) => {
     let userId = req.body.userId;
 
     if (!userId) {
+        loggingController.createLog(req.userId, LogLevel.DEBUG,`User could not be deleted, because of missing user id.`);
         res.status(400).send({
             message: `Failed! No user id provided.`
         })
@@ -82,6 +80,7 @@ const deleteUser = async (req, res) => {
     }
 
     await User.findByIdAndDelete(userId).then(() => {
+        loggingController.createLog(req.userId, LogLevel.INFO,`User ${userId} deleted.`);
         res.status(200).send();
     }).catch((err) => {
         res.status(500).send({message: err});
@@ -90,10 +89,7 @@ const deleteUser = async (req, res) => {
 }
 
 const switchRole = async (req,res) => {
-    console.log("/switch: "+JSON.stringify(req.body));
-
     let user = req.body.user;
-
 
     if (user) {
         let doc = await User.findById<IUser>(user.userId);
@@ -106,12 +102,14 @@ const switchRole = async (req,res) => {
 
             await User.findByIdAndUpdate(user.userId,{roles: roles});
 
+            loggingController.createLog(req.userId, LogLevel.INFO,`Added role ${user.roleId} to user ${user.userId}.`);
             res.status(200).send();
         } else {
             roles.splice(roles.findIndex((x) => {return x._id == user.roleId}),1);
 
             await User.findByIdAndUpdate(user.userId,{roles: roles});
 
+            loggingController.createLog(req.userId, LogLevel.INFO,`Revoked role ${user.roleId} from user ${user.userId}.`);
             res.status(200).send();
         }
     } else {
