@@ -26,6 +26,8 @@ services:
       - 54001:54001 # webservice-backend
       - 54000:3000 # webservice-frontend
       # - 54002:27017/tcp # webservice-database
+      - 3000:3000 # Wireshark: Access via http
+      - 3001:3001 # Wireshark: Access via https
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
       - net.ipv4.ip_forward=1
@@ -81,3 +83,22 @@ services:
     depends_on:
       - wireguard
     network_mode: container:webservice-wireguard
+  wireshark:
+    image: lscr.io/linuxserver/wireshark:latest
+    container_name: wireshark
+    cap_add:
+      - NET_ADMIN
+    security_opt:
+      - seccomp:unconfined #optional
+    depends_on:
+      - wireguard
+    network_mode: service:wireguard
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - CUSTOM_USER=abc
+      - PASSWORD=abc
+    volumes:
+      - /path/to/config:/config
+    restart: unless-stopped
