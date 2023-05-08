@@ -100,7 +100,7 @@ services:
       - CUSTOM_USER=abc
       - PASSWORD=abc
       - CUSTOM_PORT=3002
-      - CUSTOM_PORT=3003
+      - CUSTOM_HTTPS_PORT=3003
     volumes:
       - /path/to/config:/config
     restart: unless-stopped
