@@ -7,6 +7,7 @@ import { readFileSync } from 'fs';
 import * as io from 'socket.io-client';
 import fs from 'fs';
 import path from 'path';
+import { LogLevel, loggingController } from '../controllers/loggingController';
 
 export class IoBrokerSocket {
     _socket =            null;
@@ -81,7 +82,7 @@ export class IoBrokerSocket {
 
     _checkConnection(func, _arguments) {
         if (!this._isConnected) {
-            console.log('No connection!');
+            loggingController.createLog(undefined, LogLevel.INFO,`ioBroker WebSocket: No connection!`);
             return false;
         }
 
@@ -91,7 +92,7 @@ export class IoBrokerSocket {
 
         //socket.io
         if (this._socket === null) {
-            console.log('socket.io not initialized');
+            loggingController.createLog(undefined, LogLevel.WARN,`ioBroker WebSocket: socket.io not initalized!`);
             return false;
         } else {
             return true;
@@ -153,7 +154,8 @@ export class IoBrokerSocket {
         // reconnect
         if ((!connOptions.mayReconnect || connOptions.mayReconnect()) && !this._connectInterval) {
             this._connectInterval = setInterval(function () {
-                console.log('Trying connect...');
+                loggingController.createLog(undefined, LogLevel.INFO,`ioBroker WebSocket: Trying connect...`);
+                
                 that._socket.connect();
                 that._countDown = Math.floor(that._reconnectInterval / 1000);
             }, this._reconnectInterval);
@@ -185,8 +187,6 @@ export class IoBrokerSocket {
         connOptions.socketSession = connOptions.socketSession || 'nokey';
 
         var url = connLink;
-        console.log("url:",url);
-        console.log("key:",connOptions.socketSession);
 
         // Get self signed cert
         let keyFile = undefined;
@@ -216,13 +216,13 @@ export class IoBrokerSocket {
         });
 
         this._socket.on("connect_error", (err) => {
-            console.log(`connect_error due to ${err.message}`);
+            loggingController.createLog(undefined, LogLevel.ERROR,`ioBroker WebSocket: connect_error due to ${err.message}`);
           });
 
         this._socket.on('connect', function () {
             if (that._disconnectedSince) {
                 var offlineTime = Date.now() - that._disconnectedSince;
-                console.log('was offline for ' + (offlineTime / 1000) + 's');
+                loggingController.createLog(undefined, LogLevel.WARN,`ioBroker WebSocket: was offline for ${(offlineTime / 1000)} s.`);
 
                 // reload whole page if no connection longer than some period
                 if (that._reloadInterval && offlineTime > that._reloadInterval * 1000 && !this.authError) {
@@ -242,7 +242,7 @@ export class IoBrokerSocket {
             }
 
             that._socket.emit('name', connOptions.name);
-            console.log(new Date().toISOString() + ' Connected => authenticate');
+            loggingController.createLog(undefined, LogLevel.INFO,`ioBroker WebSocket: Connected => authenticate.`);
 
             setTimeout(function () {
                 const thatInner = this;
@@ -262,12 +262,13 @@ export class IoBrokerSocket {
                         thatInner.waitConnect = null;
                     }
 
-                    console.log(new Date().toISOString() + ' Authenticated: ' + isOk);
+                    loggingController.createLog(undefined, LogLevel.INFO,`ioBroker WebSocket: Authenticated: ${isOk}`);
 
                     if (isOk) {
                         that._onAuth(objectsRequired, isSecure);
                     } else {
-                        console.log('permissionError');
+
+                        loggingController.createLog(undefined, LogLevel.ERROR,`ioBroker WebSocket: permissionError`);
                     }
                 });
             }, 50);
@@ -323,7 +324,7 @@ export class IoBrokerSocket {
         // after reconnect the "connect" event will be called
         that._socket.on('reconnect', function () {
             var offlineTime = Date.now() - that._disconnectedSince;
-            console.log('was offline for ' + (offlineTime / 1000) + 's');
+            loggingController.createLog(undefined, LogLevel.WARN,`ioBroker WebSocket: was offline for ${(offlineTime / 1000)} s.`);
 
             // reload whole page if no connection longer than one minute
             if (that._reloadInterval && offlineTime > that._reloadInterval * 1000) {
@@ -353,7 +354,7 @@ export class IoBrokerSocket {
                     try {
                         state.val = JSON.parse(state.val);
                     } catch (e) {
-                        console.log('Command seems to be an object, but cannot parse it: ' + state.val);
+                        loggingController.createLog(undefined, LogLevel.WARN,`ioBroker WebSocket: ommand seems to be an object, but cannot parse it: ${state.val}`);
                     }
                 }
 
@@ -386,7 +387,7 @@ export class IoBrokerSocket {
                     }*/
                 that._connCallbacks.onError(err);
             } else {
-                console.log('permissionError');
+                loggingController.createLog(undefined, LogLevel.ERROR,`ioBroker WebSocket: permissionError`);
             }
         });
 
@@ -417,7 +418,7 @@ export class IoBrokerSocket {
 
     logout(callback) {
         if (!this._isConnected) {
-            console.log('No connection!');
+            loggingController.createLog(undefined, LogLevel.WARN,`ioBroker WebSocket: No connection!`);
             return;
         }
 
@@ -452,12 +453,12 @@ export class IoBrokerSocket {
 
     _checkAuth(callback) {
         if (!this._isConnected) {
-            console.log('No connection!');
+            loggingController.createLog(undefined, LogLevel.WARN,`ioBroker WebSocket: No connection!`);
             return;
         }
         //socket.io
         if (this._socket === null) {
-            console.log('socket.io not initialized');
+            loggingController.createLog(undefined, LogLevel.ERROR,`ioBroker WebSocket: socket.io not initialized!`);
             return;
         }
         this._socket.emit('getVersion', function (error, version) {
@@ -610,7 +611,7 @@ export class IoBrokerSocket {
     readDir(dirname, callback) {
         //socket.io
         if (this._socket === null) {
-            console.log('socket.io not initialized');
+            loggingController.createLog(undefined, LogLevel.ERROR,`ioBroker WebSocket: socket.io not initialized!`);
             return;
         }
         dirname = dirname || '/';
@@ -1097,11 +1098,11 @@ export class IoBrokerSocket {
 
     addObject(objId, obj, callback) {
         if (!this._isConnected) {
-            console.log('No connection!');
+            loggingController.createLog(undefined, LogLevel.WARN,`ioBroker WebSocket: No connection!`);
         } else
         //socket.io
         if (this._socket === null) {
-            console.log('socket.io not initialized');
+            loggingController.createLog(undefined, LogLevel.ERROR,`ioBroker WebSocket: socket.io not initialized!`);
         }
     }
 
@@ -1115,11 +1116,13 @@ export class IoBrokerSocket {
 
     httpGet(url, callback) {
         if (!this._isConnected) {
-            return console.log('No connection!');
+            loggingController.createLog(undefined, LogLevel.WARN,`ioBroker WebSocket: No connection!`);
+            return;
         }
         //socket.io
         if (this._socket === null) {
-            return console.log('socket.io not initialized');
+            loggingController.createLog(undefined, LogLevel.ERROR,`ioBroker WebSocket: socket.io not initialized!`);
+            return;
         }
         this._socket.emit('httpGet', url, function (data) {
             callback && callback(data);
@@ -1127,14 +1130,14 @@ export class IoBrokerSocket {
     }
 
     logError(errorText) {
-        console.log("Error: " + errorText);
+        loggingController.createLog(undefined, LogLevel.ERROR,`ioBroker WebSocket: Error: ${errorText}`);
         if (!this._isConnected) {
             //console.log('No connection!');
             return;
         }
         //socket.io
         if (this._socket === null) {
-            console.log('socket.io not initialized');
+            loggingController.createLog(undefined, LogLevel.ERROR,`ioBroker WebSocket: socket.io not initialized!`);
             return;
         }
         this._socket.emit('log', 'error', 'Addon DashUI  ' + errorText);
@@ -1189,11 +1192,13 @@ export class IoBrokerSocket {
         }
 
         if (!this._isConnected) {
-            return console.log('No connection!');
+            loggingController.createLog(undefined, LogLevel.WARN,`ioBroker WebSocket: No connection!`);
+            return;
         }
 
         if (!this._authInfo) {
-            console.log("No credentials!");
+            loggingController.createLog(undefined, LogLevel.WARN,`ioBroker WebSocket: No credentials!`);
+            return;
         }
     }
 
@@ -1260,7 +1265,8 @@ export class IoBrokerSocket {
     chmodProject(projectDir, mode, callback) {
         //socket.io
         if (this._socket === null) {
-            return console.log('socket.io not initialized');
+            loggingController.createLog(undefined, LogLevel.ERROR,`ioBroker WebSocket: socket.io not initialized!`);
+            return;
         }
         this._socket.emit('chmodFile', this.namespace, projectDir + '*', {mode: mode}, function (err, data) {
             callback && callback(err, data);
@@ -1322,11 +1328,13 @@ export class IoBrokerSocket {
             useConvert = undefined;
         }
         if (!this._isConnected) {
-            return console.log('No connection!');
+            loggingController.createLog(undefined, LogLevel.WARN,`ioBroker WebSocket: No connection!`);
+            return;
         }
         //socket.io
         if (this._socket === null) {
-            return console.log('socket.io not initialized');
+            loggingController.createLog(undefined, LogLevel.ERROR,`ioBroker WebSocket: socket.io not initialized!`);
+            return;
         }
         if (project.match(/\/$/)) {
             project = project.substring(0, project.length - 1);
@@ -1335,7 +1343,8 @@ export class IoBrokerSocket {
         
         this.getLiveHost(function (host) {
             if (!host) {
-                return console.log('No active host found');
+                loggingController.createLog(undefined, LogLevel.WARN,`ioBroker WebSocket: No active host found!`);
+                return;
             }
             // to do find active host
             this._socket.emit('sendToHost', host, 'readDirAsZip', {
@@ -1354,11 +1363,12 @@ export class IoBrokerSocket {
 
     writeDirAsZip(project, base64, callback) {
         if (!this._isConnected) {
-            return console.log('No connection!');
+            loggingController.createLog(undefined, LogLevel.WARN,`ioBroker WebSocket: No connection!`);
+            return;
         }
         //socket.io
         if (this._socket === null) {
-            return console.log('socket.io not initialized');
+            return loggingController.createLog(undefined, LogLevel.ERROR,`ioBroker WebSocket: socket.io not initialized!`);
         }
         if (project.match(/\/$/)) {
             project = project.substring(0, project.length - 1);
@@ -1366,7 +1376,8 @@ export class IoBrokerSocket {
         
         this.getLiveHost(function (host) {
             if (!host) {
-                return console.log('No active host found');
+                loggingController.createLog(undefined, LogLevel.WARN,`ioBroker WebSocket: No active host found!`);
+                return;
             }
             this._socket.emit('sendToHost', host, 'writeDirAsZip', {
                 id:   this.namespace,

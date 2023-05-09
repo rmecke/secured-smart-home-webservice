@@ -67,8 +67,6 @@ export const toggleRoleSwitch = roleData => dispatch => {
     newValue: roleData.newValue
   };
 
-  console.log("roleSwitch:",payload);
-
   toggleRoleSwitchApi(payload)
     .then(response => dispatch(toggleRoleSwitchSuccess(response.data.user)))
     .catch(error => {

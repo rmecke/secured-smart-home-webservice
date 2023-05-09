@@ -45,7 +45,6 @@ export const fetchRoomDevices = roomId => dispatch => {
 };
 
 export const fetchRoomDevicesUpdate = (roomId,devices) => dispatch => {
-  console.log("dispatched");
   dispatch(fetchRoomDevicesUpdated(roomId,devices));
 };
 
@@ -84,8 +83,6 @@ export const toggleDeviceSwitch = controlData => dispatch => {
     deviceId: controlData.deviceId,
     newValue: controlData.newValue
   };
-
-  console.log(payload);
 
   toggleDeviceSwitchApi(payload)
     .then(response => dispatch(toggleDeviceSwitchSuccess(response.data.device)))

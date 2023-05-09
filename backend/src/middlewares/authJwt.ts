@@ -28,7 +28,6 @@ const verifyToken = (req, res, next) => {
 };
 
 const verifyRefreshToken = (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    console.log("cookies: ", JSON.stringify(req.cookies));
     if (req.cookies?.jwt) {
         // retrieve the refresh token
         const refreshToken = req.cookies.jwt;

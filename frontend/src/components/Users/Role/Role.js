@@ -19,8 +19,6 @@ export default class Role extends Component {
   };
 
   render() {
-    console.log(this.props.assigned);
-
     return (
       <div className={classes.Role}>
         <div className={classes.Header}>

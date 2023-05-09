@@ -48,10 +48,16 @@ async function retrieveRoomData() {
     }
     
     let connCallbacks = {
-        onConnChange:   function (isConnected) {console.log("Connection Changed.");}, // optional - called if connection state changed.
-        onObjectChange: function (id, obj)     {console.log("Object Changed.");}, // optional - called if content of some object is changed, new object created or object was deleted (obj = null)
+        onConnChange:   function (isConnected) {
+            loggingController.createLog(undefined,LogLevel.INFO,`Connection to ioBroker WebSocket changed. Connected: ${isConnected}.`);
+        }, // optional - called if connection state changed.
+        onObjectChange: function (id, obj)     {
+            loggingController.createLog(undefined,LogLevel.INFO,`Object from ioBroker WebSocket changed. Object: ${id}, ${obj}`);
+        }, // optional - called if content of some object is changed, new object created or object was deleted (obj = null)
         onUpdate:       onUpdate, // optional - called if state of some object is changed, new state for object is created or state was deleted (state = null)
-        onError:        function (error)       {console.log("Error.");}  // optional - called if some error occurs
+        onError:        function (error)       {
+            loggingController.createLog(undefined,LogLevel.ERROR,`Error occured with ioBroker WebSocke. Error: ${error}`);
+        }  // optional - called if some error occurs
     };
     
     // For documentation of iobroker socket commands, visit: https://github.com/ioBroker/ioBroker.socketio#usage
@@ -136,7 +142,7 @@ async function retrieveDeviceValues(device,roomKey,deviceKey) {
                         control.value = states[control.datapoint].val;
                         loggingController.createLog(undefined, LogLevel.DEBUG,`Datapoint ${control.datapoint}'s initial value is ${control.value}.`);
                     } else {
-                        console.log(`\x1b[36m${control.datapoint}\x1b[0m: \x1b[31mN/A\x1b[0m`)
+                        loggingController.createLog(undefined, LogLevel.WARN,`Datapoint ${control.datapoint}'s initial value is not known.`);
                     }
                 })
                 /*await axios.get(`/getPlainValue/${control.datapoint}`)

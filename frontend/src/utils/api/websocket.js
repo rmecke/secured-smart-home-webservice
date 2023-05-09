@@ -14,7 +14,6 @@ export const openWebSocket = (accessToken) => {
         ws.close();
     }
 
-    console.log(`${WS_URL}/ws?token=`+accessToken);
     ws = new WebSocket(`${WS_URL}/ws?token=`+accessToken);
 
     ws.onopen = (event) => {
@@ -23,17 +22,14 @@ export const openWebSocket = (accessToken) => {
 
     ws.onmessage = async (event) => {
         let data = JSON.parse(event.data);
-        console.log(data);
 
         if (data.type == "devicesUpdate") {
-            console.log("to be dispatched");
             store.dispatch(fetchRoomDevicesUpdate(data.roomId,data.devices));
         }
 
         if (data.type == "authError") {
             console.log("authError... trying to get new access token");
             await refreshAPI();
-            console.log(JSON.stringify(store));
         }
     }
 

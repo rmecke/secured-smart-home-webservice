@@ -42,7 +42,6 @@ export const toggleRoleSwitchApi = async payload => {
   .catch(async function (error) {
     if (error.response.status === 401) {
       let data = await refreshAPI();
-      console.log("data.accessToken: " +data.accessToken);
       if (!data.accessToken) {
         throw(error);
       } else {
@@ -81,7 +80,6 @@ export const deleteUserApi = async payload => {
   .catch(async function (error) {
     if (error.response.status === 401) {
       let data = await refreshAPI();
-      console.log("data.accessToken: " +data.accessToken);
       if (!data.accessToken) {
         throw(error);
       } else {

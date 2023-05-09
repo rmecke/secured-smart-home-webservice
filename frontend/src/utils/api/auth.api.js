@@ -6,7 +6,6 @@ export const loginAPI = async (username, password) => {
     .post("/api/auth/login", { username, password }, {withCredentials: true});
   if (response.data.accessToken) {
     localStorage.setItem("user", JSON.stringify(response.data));
-    console.log("Got first access token: ",response.data.accessToken);
   }
 
   return response.data;
@@ -16,7 +15,6 @@ export const refreshAPI = async () => {
   const response = await axios
     .post("/api/auth/refresh", {}, {withCredentials: true});
   if (response.data.accessToken) {
-    console.log("Got new access token: ",response.data.accessToken)
     localStorage.setItem("user", JSON.stringify(response.data));
     openWebSocket(response.data.accessToken);
   }

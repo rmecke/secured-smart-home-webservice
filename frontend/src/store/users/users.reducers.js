@@ -21,7 +21,6 @@ export default (state = initialState, { type, payload }) => {
     case FETCH_USERS_START:
       return { ...state };
     case FETCH_USERS_SUCCESS:
-      console.log("users:",payload.users );
       return {
         ...state,
         users: payload.users

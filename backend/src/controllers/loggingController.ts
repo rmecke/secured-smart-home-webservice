@@ -25,8 +25,6 @@ let logDirectory = "../../../logs"; // --> directory has been mounted with docke
 let logFileName = `backend_${("0"+logDate.getDate()).slice(-2)}_${("0"+logDate.getMonth()).slice(-2)}_${logDate.getFullYear()}_${("0"+logDate.getHours()).slice(-2)}_${("0"+logDate.getMinutes()).slice(-2)}_${("0"+logDate.getSeconds()).slice(-2)}`;
 let logFilePath = logDirectory+"/"+logFileName+".txt";
 
-console.log("logFilePath:"+path.resolve(__dirname, logFilePath));
-
 const createLog = (user: string, level: LogLevel, message: string) => {
     const timestamp: number = Date.now()
     const dateFormatted = new Date(timestamp).toLocaleString();

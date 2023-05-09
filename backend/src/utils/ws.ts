@@ -15,6 +15,7 @@
 // based on: https://github.com/ioBroker/ioBroker.ws.client
 
 import { WebSocket } from 'ws';
+import { LogLevel, loggingController } from '../controllers/loggingController';
 
 export const MESSAGE_TYPES = {
     MESSAGE: 0,
@@ -69,9 +70,9 @@ export function SocketClient () {
     let authTimeout = null;
 
     this.log = {
-        debug: text => DEBUG && console.log(`[${new Date().toISOString()}] ${text}`),
-        warn:  text => console.warn(`[${new Date().toISOString()}] ${text}`),
-        error: text => console.error(`[${new Date().toISOString()}] ${text}`)
+        debug: text => loggingController.createLog(undefined, LogLevel.DEBUG,`WebSocket: ${text}`),
+        warn:  text => loggingController.createLog(undefined, LogLevel.WARN,`WebSocket: ${text}`),
+        error: text => loggingController.createLog(undefined, LogLevel.ERROR,`WebSocket: ${text}`)
     };
 
     this.getQuery = _url => {

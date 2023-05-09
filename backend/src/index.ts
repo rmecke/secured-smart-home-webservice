@@ -15,6 +15,7 @@ import jwt from "jsonwebtoken";
 import Websocket from 'ws';
 import { websocketController } from './controllers/websocketController';
 import cookieparser from "cookie-parser";
+import { LogLevel, loggingController } from './controllers/loggingController';
 
 const User = DB.User;
 const Role = DB.Role;
@@ -41,13 +42,11 @@ const options: ConnectOptions = (DB_USERNAME && DB_USERPASSWORD)
     : {
         dbName: DB_NAME,
     };
-console.log("DB_CONNECTION_STRING: "+DB_CONNECTION_STRING);
-console.log("Database Connect Options: "+JSON.stringify(options));
 
 DB.mongoose
     .connect(DB_CONNECTION_STRING, options)
     .then(() => {
-        console.log("Successfuly connected to MongoDB.");
+        loggingController.createLog(undefined,LogLevel.INFO,"Successfuly connected to MongoDB.");
         initial();
     })
     .catch(err => {
@@ -65,16 +64,16 @@ function initial() {
                 })
                 .save()
                 .then(() => {
-                    console.log(`Successfully added ${role} to roles collection.`);
+                    loggingController.createLog(undefined,LogLevel.INFO,`Successfully added ${role} to roles collection.`);
                 })
                 .catch(err => {
-                    console.error(`Error while adding ${role} to roles collection: ${err}`);
+                    loggingController.createLog(undefined,LogLevel.ERROR,`Error while adding ${role} to roles collection: ${err}`);
                 })
             })
         }
     })
     .catch((err) => {
-        console.error(`Error while retrieving Roles document count.`);
+        loggingController.createLog(undefined,LogLevel.ERROR,`Error while retrieving Roles document count.`);
     })
 }
 
@@ -123,7 +122,7 @@ if (HTTPS) {
                 cert: crtFile
             },app)
         .listen(PORT, () => {
-            console.log(`Server is running on port ${PORT} with SSL certificate.`);
+            loggingController.createLog(undefined,LogLevel.INFO,`Server is running on port ${PORT} with SSL certificate.`);
         })
     } else {
         console.error("SSL certificate not found. Make sure to place the key.pem and crt.pem in the folder ssl_certificate. If you don't want to use SSL encryption, set the environment variable HTTPS=false .")
@@ -131,7 +130,7 @@ if (HTTPS) {
     
 } else {
     expressServer = app.listen(PORT, () => {
-        console.log(`Server is running on port ${PORT} without SSL certificate.`);
+        loggingController.createLog(undefined,LogLevel.INFO,`Server is running on port ${PORT} without SSL certificate.`);
     })
 }
 

@@ -22,7 +22,6 @@ export class Header extends Component {
   };
 
   onLogoutClickHandler = () => {
-    console.log(this.props);
     this.props.logout();
   };
 

@@ -43,7 +43,6 @@ const getUsers = async (req,res) => {
             let userRole = user.roles.find((x) => {return x._id.toString() == role._id.toString()});
             if (userRole) {
                 // User is assigned to that role
-                console.log(`${role.name} is assigned`);
                 polishedUser.roles.push({
                     _id: role._id,
                     name: role.name,
@@ -51,7 +50,6 @@ const getUsers = async (req,res) => {
                 })
             } else {
                 // User is not assigned to that role
-                console.log(`${role.name} is not assigned`);
                 polishedUser.roles.push({
                     _id: role._id,
                     name: role.name,

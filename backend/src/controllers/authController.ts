@@ -10,8 +10,6 @@ const ROLES = DB.ROLES;
 
 const AUTH_SECRET_ACCESS = process.env.AUTH_SECRET_ACCESS || AUTH_CONFIG.SECRET_ACCESS;
 const AUTH_SECRET_REFRESH = process.env.AUTH_SECRET_REFRESH || AUTH_CONFIG.SECRET_REFRESH;
-console.log("AUTH_SECRET_ACCESS: "+AUTH_SECRET_ACCESS);
-console.log("AUTH_SECRET_REFRESH: "+AUTH_SECRET_REFRESH);
 
 const register = async (req, res) => {
     if (!req.body.username && !req.body.password) {
