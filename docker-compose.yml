@@ -104,3 +104,19 @@ services:
     volumes:
       - /path/to/config:/config
     restart: unless-stopped
+  ghex:
+    build: ./ghex
+    container_name: webservice-ghex
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - CUSTOM_USER=abc
+      - PASSWORD=abc
+    ports:
+      - 3004:3000 # Wireshark: Access via http
+      - 3005:3001 # Wireshark: Access via https
+    volumes:
+      - /path/to/config:/config
+      - /tmp:/tmp-host
+    restart: unless-stopped
