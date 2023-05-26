@@ -80,6 +80,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: HighlyConfidentialPassword
+    volumes:
+      - ./database:/data/db
     depends_on:
       - wireguard
     network_mode: container:webservice-wireguard
@@ -104,19 +106,30 @@ services:
     volumes:
       - /path/to/config:/config
     restart: unless-stopped
-  ghex:
-    build: ./ghex
-    container_name: webservice-ghex
+  #ghex:
+  #  build: ./ghex
+  #  container_name: webservice-ghex
+  #  environment:
+  #    - PUID=1000
+  #    - PGID=1000
+  #    - TZ=Etc/UTC
+  #    - CUSTOM_USER=abc
+  #    - PASSWORD=abc
+  #  ports:
+  #    - 3004:3000 # Wireshark: Access via http
+  #    - 3005:3001 # Wireshark: Access via https
+  #  volumes:
+  #    - /path/to/config:/config
+  #    - /tmp:/home/tmp-host
+  #  restart: unless-stopped
+  inotify:
+    build:
+      context: ./inotify
+    container_name: inotify
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
-      - CUSTOM_USER=abc
-      - PASSWORD=abc
-    ports:
-      - 3004:3000 # Wireshark: Access via http
-      - 3005:3001 # Wireshark: Access via https
+      - VOLUMES=/data/db
+      #- WATCH_DIFFERENCES=
     volumes:
-      - /path/to/config:/config
-      - /tmp:/tmp-host
+      - ./database:/data/db
+      - ./logs:/logs
     restart: unless-stopped

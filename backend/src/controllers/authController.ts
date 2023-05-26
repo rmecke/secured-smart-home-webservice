@@ -48,10 +48,10 @@ const register = async (req, res) => {
                     user.roles = roles.map((role) => role._id);
                     user.save()
                     .then((user) => {
+                        loggingController.createLog(user._id, LogLevel.INFO,`User registered with roles ${roleNames}.`);
                         res.send({message: "User was registered successfully"});
                     })
                     .catch((err) => {
-                        loggingController.createLog(user._id, LogLevel.INFO,`User registered with roles ${roleNames}.`);
                         res.status(500).send({message: err});
                         return;
                     });

@@ -1,3 +1,5 @@
+.vscode/*
+
 /backend/dist
 /backend/node_modules
 
