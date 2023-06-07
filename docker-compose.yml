@@ -105,6 +105,7 @@ services:
       - CUSTOM_HTTPS_PORT=3003
     volumes:
       - /path/to/config:/config
+      - ./logs:/logs
     restart: unless-stopped
   #ghex:
   #  build: ./ghex
@@ -125,11 +126,26 @@ services:
   inotify:
     build:
       context: ./inotify
-    container_name: inotify
+    container_name: webservice-inotify
     environment:
       - VOLUMES=/data/db
       #- WATCH_DIFFERENCES=
     volumes:
       - ./database:/data/db
+      - ./logs:/logs
+    restart: unless-stopped
+
+  tshark:
+    build:
+      context: ./tshark
+    container_name: webservice-tshark
+    depends_on:
+      - wireguard
+    environment:
+      - TSHARK_DURATION=3600
+      - TSHARK_FILES=24
+      - TSHARK_ETH0_FILTER=udp port 51820
+    network_mode: service:wireguard
+    volumes:
       - ./logs:/logs
     restart: unless-stopped
