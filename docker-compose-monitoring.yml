@@ -29,8 +29,8 @@ services:
       - '--web.console.templates=/usr/share/prometheus/consoles'
 
     # Exposes port 9090 to access Prometheus web UI
-    ports:
-      - 9090:9090
+    #ports:
+    #  - 9090:9090
 
     # Restart policy for Prometheus service set to always
     restart: always
@@ -57,8 +57,8 @@ services:
     image: prom/node-exporter:latest
     container_name: monitoring_node_exporter
     restart: unless-stopped
-    ports:
-      - 9100:9100
+  #  ports:
+  #    - 9100:9100
 
   cadvisor:
     image: 'gcr.io/cadvisor/cadvisor:v0.47.1'
@@ -78,5 +78,5 @@ services:
       #- "--housekeeping_interval=30s"
       # - "--allow_dynamic_housekeeping=true"
       - "--enable_load_reader=true"
-    ports:
-      - 8080:8080
+    #ports:
+    #  - 8080:8080
