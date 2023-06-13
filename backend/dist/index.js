@@ -99,20 +99,13 @@ app.get("/", (req, res) => {
 (0, adminRoutes_1.adminRoutes)(app);
 let expressServer;
 if (HTTPS) {
-    let keyFilePath = "../ssl_certificate/key.pem";
-    let crtFilePath = "../ssl_certificate/crt.pem";
+    let keyFilePath = "../../ssl_certificate/key.pem"; // --> directory has been mounted with docker
+    let crtFilePath = "../../ssl_certificate/crt.pem";
     let keyFileExists = fs_1.default.existsSync(path_1.default.resolve(__dirname, keyFilePath));
     let crtFileExists = fs_1.default.existsSync(path_1.default.resolve(__dirname, crtFilePath));
-    // If not found, try a folder above
-    if (!keyFileExists || !crtFileExists) {
-        keyFilePath = "../../ssl_certificate/key.pem";
-        crtFilePath = "../../ssl_certificate/crt.pem";
-        keyFileExists = fs_1.default.existsSync(path_1.default.resolve(__dirname, keyFilePath));
-        crtFileExists = fs_1.default.existsSync(path_1.default.resolve(__dirname, crtFilePath));
-    }
     if (keyFileExists && crtFileExists) {
-        let keyFile = fs_1.default.readFileSync(path_1.default.resolve(__dirname, "../ssl_certificate/key.pem"));
-        let crtFile = fs_1.default.readFileSync(path_1.default.resolve(__dirname, "../ssl_certificate/crt.pem"));
+        let keyFile = fs_1.default.readFileSync(path_1.default.resolve(__dirname, keyFilePath));
+        let crtFile = fs_1.default.readFileSync(path_1.default.resolve(__dirname, crtFilePath));
         expressServer = https_1.default.createServer({
             key: keyFile,
             cert: crtFile

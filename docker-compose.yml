@@ -1,7 +1,8 @@
 version: "2.1"
 services:
   wireguard:
-    image: linuxserver/wireguard
+    build:
+      context: ./wireguard
     container_name: webservice-wireguard
     cap_add:
       - NET_ADMIN
@@ -21,6 +22,7 @@ services:
     volumes:
       - ./vpn_config:/config
       - /lib/modules:/lib/modules #optional
+      - ./logs:/logs
     ports:
       - 51820:51820/udp
       - 54001:54001 # webservice-backend

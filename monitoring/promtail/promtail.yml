@@ -1,0 +1,56 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 9097
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: 'http://loki:3100/loki/api/v1/push'
+
+scrape_configs:
+  - job_name: inotify
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: inotify
+          __path__: /logs/inotify_events_*.log
+          hostname: grafana
+    pipeline_stages:
+      - regex:
+          expression: "'(?P<time>[0-9]+)' | .*"
+      - timestamp:
+          format: Unix
+          source: "time"
+  - job_name: wireguard
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: wireguard
+          __path__: /logs/wireguard_*.log
+          hostname: grafana
+    pipeline_stages:
+      - multiline:
+          firstline: 'Wireguard Status on .*'
+      - regex:
+          expression: "Wireguard Status on '(?P<time>[0-9]+)' | .*"
+      - timestamp:
+          format: Unix
+          source: "time"
+  - job_name: backend
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: backend
+          __path__: /logs/backend_*.*
+          hostname: grafana
+    pipeline_stages:
+      - regex:
+          expression: "(?P<time>[0-9]+) \\| .*"
+      - timestamp:
+          format: Unix
+          source: "time"
+          

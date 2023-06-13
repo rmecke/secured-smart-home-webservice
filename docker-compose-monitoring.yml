@@ -1,20 +1,49 @@
 version: '3.7'
 
+# PERFORMANCE
 # https://adamtheautomator.com/grafana-docker/
 # https://pramodshehan.medium.com/containers-metrics-in-prometheus-and-grafana-389555499eb8
 # https://grafana.com/grafana/dashboards/893-main/
 # https://grafana.com/docs/grafana/latest/administration/provisioning/#dashboards
 
+# LOGGING
+# https://sbcode.net/grafana/nginx-promtail/ 
+# https://grafana.com/docs/loki/latest/clients/promtail/#:~:text=Promtail%20is%20an%20agent%20which,Discovers%20targets
+# https://grafana.com/docs/loki/latest/installation/docker/
+# https://grafana.com/docs/loki/latest/clients/promtail/pipelines/
+
 # Persist data from Prometheus and Grafana with Docker volumes
 volumes:
   prometheus_data: {}
   grafana_data: {}
+  promtail_data: {}
+  loki_data: {}
 
 # Container services
 services:
+  grafana:
+    # Grafana uses the latest image
+    image: grafana/grafana:latest
+    container_name: grafana
+
+    # Sets user ID to 472
+    user: "472"
+    depends_on:
+      - prometheus
+    ports:
+      - 4000:3000
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards/:/var/lib/grafana/dashboards
+      - ./monitoring/grafana/provisioning/:/etc/grafana/provisioning/
+    env_file:
+      - ./monitoring/grafana/grafana.config
+    restart: always
+
   prometheus:
     # Prometheus uses the latest image
     image: prom/prometheus:latest
+    container_name: prometheus
 
     # Stores Prometheus data locally in the prometheus directory
     volumes:
@@ -35,30 +64,12 @@ services:
     # Restart policy for Prometheus service set to always
     restart: always
 
-  grafana:
-    # Grafana uses the latest image
-    image: grafana/grafana:latest
-
-    # Sets user ID to 472
-    user: "472"
-    depends_on:
-      - prometheus
-    ports:
-      - 4000:3000
-    volumes:
-      - grafana_data:/var/lib/grafana
-      - ./monitoring/grafana/dashboards/:/var/lib/grafana/dashboards
-      - ./monitoring/grafana/provisioning/:/etc/grafana/provisioning/
-    env_file:
-      - ./monitoring/grafana/grafana.config
-    restart: always
-
   node-exporter:
     image: prom/node-exporter:latest
-    container_name: monitoring_node_exporter
+    container_name: node-exporter
     restart: unless-stopped
-  #  ports:
-  #    - 9100:9100
+    #ports:
+    #  - 9100:9100
 
   cadvisor:
     image: 'gcr.io/cadvisor/cadvisor:v0.47.1'
@@ -80,3 +91,38 @@ services:
       - "--enable_load_reader=true"
     #ports:
     #  - 8080:8080
+
+  loki:
+    image: grafana/loki:2.8.0
+    container_name: loki
+
+    volumes:
+      - loki_data:/etc/loki
+      - ./monitoring/loki/:/etc/loki/
+    #ports:
+    #  - 3100:3100
+    command:
+      - '--config.file=/etc/loki/loki.yml'
+    restart: unless-stopped
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: promtail
+
+    volumes:
+      - ./monitoring/promtail/:/etc/promtail/
+      - promtail_data:/promtail
+      - ./logs:/logs
+      - ./iobrokerdata/log:/logs/iobroker
+
+    command:
+      #- '-inspect'
+      - '--config.file=/etc/promtail/promtail.yml'
+      #- '--config.expand-env=true'
+
+    ports:
+      - 9080:9080
+      - 9097:9097
+
+    restart: unless-stopped
+

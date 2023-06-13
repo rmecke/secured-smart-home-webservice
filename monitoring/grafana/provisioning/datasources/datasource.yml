@@ -12,3 +12,11 @@ datasources:
   access: proxy
   # <string> url
   url: http://prometheus:9090
+
+- name: Loki
+  # <string, required> datasource type. Required
+  type: loki
+  # <string, required> access mode. direct or proxy. Required
+  access: proxy
+  # <string> url
+  url: http://loki:3100

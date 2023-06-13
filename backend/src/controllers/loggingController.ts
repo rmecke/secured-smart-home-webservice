@@ -23,7 +23,7 @@ const minLvl = LogLevel[LOGGING_LVL];
 let logDate = new Date();
 let logDirectory = "../../../logs"; // --> directory has been mounted with docker
 let logFileName = `backend_${("0"+logDate.getDate()).slice(-2)}_${("0"+logDate.getMonth()).slice(-2)}_${logDate.getFullYear()}_${("0"+logDate.getHours()).slice(-2)}_${("0"+logDate.getMinutes()).slice(-2)}_${("0"+logDate.getSeconds()).slice(-2)}`;
-let logFilePath = logDirectory+"/"+logFileName+".txt";
+let logFilePath = logDirectory+"/"+logFileName+".log";
 
 const createLog = (user: string, level: LogLevel, message: string) => {
     const timestamp: number = Date.now()
