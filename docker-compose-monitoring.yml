@@ -113,12 +113,11 @@ services:
       - ./monitoring/promtail/:/etc/promtail/
       - promtail_data:/promtail
       - ./logs:/logs
-      - ./iobrokerdata/log:/logs/iobroker
 
     command:
-      #- '-inspect'
+      # - '-inspect'
       - '--config.file=/etc/promtail/promtail.yml'
-      #- '--config.expand-env=true'
+      # - '--config.expand-env=true'
 
     ports:
       - 9080:9080

@@ -19,10 +19,15 @@ scrape_configs:
           hostname: grafana
     pipeline_stages:
       - regex:
-          expression: "'(?P<time>[0-9]+)' | .*"
+          expression: "'(?P<time>[0-9]+)' \\| .* \\| Directory: '(?P<directory>.*)' \\| File: '(?P<file>.*)' \\| Action: '(?P<action>.*)'"
+          #'1685232000' | '05/28/23 00:00:00 (UTC)' | Directory: '/data/db/' | File: 'journal' | Action: 'OPEN,ISDIR'
       - timestamp:
           format: Unix
           source: "time"
+      - labels:
+          directory:
+          file:
+          action:
   - job_name: wireguard
     static_configs:
       - targets:
@@ -49,8 +54,12 @@ scrape_configs:
           hostname: grafana
     pipeline_stages:
       - regex:
-          expression: "(?P<time>[0-9]+) \\| .*"
+          expression: "(?P<time>[0-9]+) \\| .* \\| (?P<level>[A-Z]+) \\| (?P<message>.*) \\| (?P<user>.*)"
+          #1686674711037 | 6/13/2023, 4:45:11 PM | INFO | Websocket connection established and verified. | 6478cccfc33e779b2c0bfda0
       - timestamp:
-          format: Unix
+          format: UnixMs
           source: "time"
-          
+      - labels:
+          level:
+          message:
+          user:
