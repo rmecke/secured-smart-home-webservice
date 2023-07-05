@@ -30,6 +30,7 @@ services:
       # - 54002:27017/tcp # webservice-database
       - 3000:3002 # Wireshark: Access via http
       - 3001:3003 # Wireshark: Access via https
+      - 54003:54003 # Gotify: ssl port
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
       - net.ipv4.ip_forward=1
@@ -68,6 +69,8 @@ services:
       - AUTH_SECRET_REFRESH=secured-smart-home-refresh
       - CORS_ORIGIN=https://secured-smart-home.de:54000 # the frontend address # set to http:// if HTTPS=false
       - LOGGING_LVL=DEBUG
+      - GOTIFY_URL=https://secured-smart-home.de:54002 # the gotify address
+      - GOTIFY_TOKEN=A9LkayEzlGkBMaj # the gotify token
     volumes:
       - ./ssl_certificate:/ssl_certificate
       - ./logs:/logs
@@ -109,22 +112,6 @@ services:
       - /path/to/config:/config
       - ./logs:/logs
     restart: unless-stopped
-  #ghex:
-  #  build: ./ghex
-  #  container_name: webservice-ghex
-  #  environment:
-  #    - PUID=1000
-  #    - PGID=1000
-  #    - TZ=Etc/UTC
-  #    - CUSTOM_USER=abc
-  #    - PASSWORD=abc
-  #  ports:
-  #    - 3004:3000 # Wireshark: Access via http
-  #    - 3005:3001 # Wireshark: Access via https
-  #  volumes:
-  #    - /path/to/config:/config
-  #    - /tmp:/home/tmp-host
-  #  restart: unless-stopped
   inotify:
     build:
       context: ./inotify
@@ -136,18 +123,40 @@ services:
       - ./database:/data/db
       - ./logs:/logs
     restart: unless-stopped
-
-  tshark:
-    build:
-      context: ./tshark
-    container_name: webservice-tshark
-    depends_on:
-      - wireguard
+  gotify:
+    image: gotify/server
+    container_name: webservice-gotify
     environment:
-      - TSHARK_DURATION=3600
-      - TSHARK_FILES=24
-      - TSHARK_ETH0_FILTER=udp port 51820
+      - TZ="Europe/Berlin"
+      - GOTIFY_SERVER_PORT=53003
+      - GOTIFY_SERVER_KEEPALIVEPERIODSECONDS=0
+      - GOTIFY_SERVER_LISTENADDR=
+      - GOTIFY_SERVER_SSL_ENABLED=true
+      - GOTIFY_SERVER_SSL_REDIRECTTOHTTPS=true
+      - GOTIFY_SERVER_SSL_LISTENADDR=
+      - GOTIFY_SERVER_SSL_PORT=54003
+      - GOTIFY_SERVER_SSL_CERTFILE=/ssl_certificate/crt.pem
+      - GOTIFY_SERVER_SSL_CERTKEY=/ssl_certificate/key.pem
+      - GOTIFY_SERVER_SSL_LETSENCRYPT_ENABLED=false
+      - GOTIFY_SERVER_SSL_LETSENCRYPT_ACCEPTTOS=false
+      - GOTIFY_SERVER_SSL_LETSENCRYPT_CACHE=certs
+      # GOTIFY_SERVER_SSL_LETSENCRYPT_HOSTS=- mydomain.tld\n- myotherdomain.tld
+      # GOTIFY_SERVER_RESPONSEHEADERS="X-Custom-Header:\"custom value\""
+      # GOTIFY_SERVER_CORS_ALLOWORIGINS="- \".+.example.com\"\n- \"otherdomain.com\""
+      # GOTIFY_SERVER_CORS_ALLOWMETHODS="- \"GET\"\n- \"POST\""
+      # GOTIFY_SERVER_CORS_ALLOWHEADERS="- \"Authorization\"\n- \"content-type\""
+      # GOTIFY_SERVER_STREAM_ALLOWEDORIGINS="- \".+.example.com\"\n- \"otherdomain.com\""
+      - GOTIFY_SERVER_STREAM_PINGPERIODSECONDS=45
+      - GOTIFY_DATABASE_DIALECT=sqlite3
+      - GOTIFY_DATABASE_CONNECTION=data/gotify.db
+      - GOTIFY_DEFAULTUSER_NAME=admin
+      - GOTIFY_DEFAULTUSER_PASS=admin
+      - GOTIFY_PASSSTRENGTH=10
+      - GOTIFY_UPLOADEDIMAGESDIR=data/images
+      - GOTIFY_PLUGINSDIR=data/plugins
+      - GOTIFY_REGISTRATION=false
     network_mode: service:wireguard
     volumes:
-      - ./logs:/logs
+      - ./gotify/data:/app/data
+      - ./ssl_certificate:/ssl_certificate
     restart: unless-stopped

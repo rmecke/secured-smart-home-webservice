@@ -5,6 +5,7 @@ import fs from "fs";
 import { AUTH_CONFIG, LOGGIN_CONFIG } from "../config";
 import { DB } from '../models/index';
 import path from 'path';
+import { notifyController } from './notifyController';
 const Log = DB.Log;
 
 export enum LogLevel {
@@ -16,7 +17,7 @@ export enum LogLevel {
     "FATAL"
 };
 
-const LOGGING_LVL = process.env.L || LOGGIN_CONFIG.LVL;
+const LOGGING_LVL = process.env.LOGGING_LVL || LOGGIN_CONFIG.LVL;
 const minLvl = LogLevel[LOGGING_LVL];
 
 // Create a new log file

@@ -7,6 +7,7 @@ import axios from "../utils/axios";
 import { IControl, IDatapoint, IDevice, IRoom } from 'src/interfaces';
 import { websocketController } from './websocketController';
 import { LogLevel, loggingController } from './loggingController';
+import { notifyController } from './notifyController';
 
 const WEBSOCKET_URL = process.env.WEBSOCKET_URL || WEBSOCKET_CONFIG.URL;
 
@@ -44,6 +45,12 @@ async function retrieveRoomData() {
 
             // send the updated devices to the frontend
             websocketController.sendDevicesUpdate(allDatapoints[index].roomKey,roomsRoot["rooms"][allDatapoints[index].roomKey]["devices"]);
+        }
+
+        if (id == "0_userdata.0.gotify.message") {
+            // Send notification
+            let messageObj = JSON.parse(state.val)
+            notifyController.sendNotification(messageObj.title,messageObj.message);
         }
     }
     

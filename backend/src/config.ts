@@ -45,3 +45,10 @@ export const WEBSOCKET_CONFIG = {
 export const LOGGIN_CONFIG = {
     LVL: "DEBUG"
 }
+
+// Only for development. 
+// For production please use environment variables: GOTIFY_URL
+export const GOTIFY_CONFIG = {
+    URL: undefined, //"https://secured-smart-home.de:54002",
+    TOKEN: undefined, //"A9LkayEzlGkBMaj",
+}
