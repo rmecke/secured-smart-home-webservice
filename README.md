@@ -61,3 +61,8 @@ After that, restart the device with ```sudo reboot```.
 Also I would like to mention the following sources, which gave me an orientation on how to handle some issues:
 - https://adamtheautomator.com/https-nodejs/ for setting up a basic webservice.
 - https://www.bezkoder.com/react-redux-jwt-auth/ for setting up JWT authentification using access and refresh tokens.
+- https://github.com/bezkoder/react-jwt-auth for authentification.
+- https://github.com/abduvik/home-automation-ui for a great smart home ui as starting point.
+- https://github.com/ioBroker/ioBroker.socketio for websocket connection with ioBroker.
+- https://www.linode.com/docs/guides/authenticating-over-websockets-with-jwt/ for a JWT-protected webservice.
+- https://www.geeksforgeeks.org/jwt-authentication-with-refresh-tokens/ for a guide on refresh tokens.
