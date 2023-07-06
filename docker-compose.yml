@@ -123,6 +123,20 @@ services:
       - ./database:/data/db
       - ./logs:/logs
     restart: unless-stopped
+  tshark:
+    build:
+      context: ./tshark
+    container_name: tshark
+    depends_on:
+      - wireguard
+    environment:
+      - TSHARK_DURATION=3600
+      - TSHARK_FILES=24
+      - TSHARK_ETH0_FILTER=(port 51820) or (port 54000) or (port 54001)
+    network_mode: service:wireguard
+    volumes:
+      - ./logs:/logs
+    restart: unless-stopped
   gotify:
     image: gotify/server
     container_name: webservice-gotify

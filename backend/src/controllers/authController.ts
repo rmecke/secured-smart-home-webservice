@@ -123,7 +123,7 @@ const login = (req: express.Request, res: express.Response) => {
         })
 
         // assign refresh token in http-only cookie
-        res.cookie("jwt",refreshToken,{httpOnly: true, secure: false, sameSite: 'strict', maxAge: 24 * 60 * 60 * 1000});
+        res.cookie("jwt",refreshToken,{httpOnly: true, secure: true, sameSite: 'strict', maxAge: 24 * 60 * 60 * 1000});
 
         // retrieve roles and send them back
         var authorities = [];
@@ -192,7 +192,7 @@ const refresh = (req: express.Request, res: express.Response) => {
                 }
         })
 
-        loggingController.createLog(user._id, LogLevel.INFO,`Refresh token created.`);
+        loggingController.createLog(user._id, LogLevel.INFO,`Access token created based on refresh token.`);
 
         res.status(200).send({
             id: user._id,

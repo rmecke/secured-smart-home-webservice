@@ -12,11 +12,29 @@
       "icon":"",
       "datapoint": "mqtt.0.RobertsRoom.Lights.Desk"
     },
-    "my-room-tv": {
-      "name": "Fernseher",
+    "my-room-data": {
+      "name": "Raumdaten",
       "switch": true,
       "icon":"",
-      "datapoint": "0_userdata.0.translator.tv"
+      "datapoint": "mqtt.0.test.switch",
+      "controls": {
+        "my-room-data-temperature": {
+          "name": "Temperatur",
+          "type": "sensor",
+          "datapoint": "mqtt.0.my-room.room-data.temperature",
+          "value": 0,
+          "min": 0,
+          "max": 100
+        },
+        "my-room-data-humidity": {
+          "name": "Luftfeuchtigkeit",
+          "type": "sensor",
+          "datapoint": "mqtt.0.my-room.room-data.humidty",
+          "value": 0,
+          "min": 0,
+          "max": 100
+        }
+      }
     }
   }
 }
