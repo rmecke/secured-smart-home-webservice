@@ -48,6 +48,7 @@ DB.mongoose
     .then(() => {
         loggingController.createLog(undefined,LogLevel.INFO,"Successfuly connected to MongoDB.");
         initial();
+        boot();
     })
     .catch(err => {
         console.error(`Error while connecting to MongoDB: ${err}`);
@@ -77,63 +78,65 @@ function initial() {
     })
 }
 
-// Create the REST API
-var app: express.Express = express();
+function boot() {
+    // Create the REST API
+    var app: express.Express = express();
 
-var whitelist = ["http://localhost:54000","https://localhost:54000","http://localhost:3000","https://localhost:3000",CORS_ORIGIN];
-var corsOptions: cors.CorsOptions = {
-    origin(requestOrigin, callback) {
-        if (whitelist.indexOf(requestOrigin) !== -1) {
-            callback(null,true);
-        } else {
-            callback(new Error(`Origin ${requestOrigin} not allowed by CORS.`));
-        }
-    },
-    credentials: true
-}
-app.use(cors(corsOptions));
-
-app.use(express.json());
-app.use(express.urlencoded({extended: true}));
-app.use(cookieparser());
-app.get("/", (req,res) => {
-    res.json({ message: "Welcome to the Secured Smart Home!"});
-})
-
-authRoutes(app);
-contentRoutes(app);
-homeRoutes(app);
-adminRoutes(app);
-
-let expressServer;
-
-if (HTTPS) {
-    let keyFilePath = "../../ssl_certificate/key.pem"; // --> directory has been mounted with docker
-    let crtFilePath = "../../ssl_certificate/crt.pem";
-    let keyFileExists = fs.existsSync(path.resolve(__dirname, keyFilePath));
-    let crtFileExists = fs.existsSync(path.resolve(__dirname, crtFilePath));
-
-    if (keyFileExists && crtFileExists) {   
-        let keyFile = fs.readFileSync(path.resolve(__dirname, keyFilePath));
-        let crtFile = fs.readFileSync(path.resolve(__dirname, crtFilePath));
-
-        expressServer = https.createServer({
-                key: keyFile,
-                cert: crtFile
-            },app)
-        .listen(PORT, () => {
-            loggingController.createLog(undefined,LogLevel.INFO,`Server is running on port ${PORT} with SSL certificate.`);
-        })
-    } else {
-        console.error("SSL certificate not found. Make sure to place the key.pem and crt.pem in the folder ssl_certificate. If you don't want to use SSL encryption, set the environment variable HTTPS=false .")
+    var whitelist = ["http://localhost:54000","https://localhost:54000","http://localhost:3000","https://localhost:3000",CORS_ORIGIN];
+    var corsOptions: cors.CorsOptions = {
+        origin(requestOrigin, callback) {
+            if (whitelist.indexOf(requestOrigin) !== -1) {
+                callback(null,true);
+            } else {
+                callback(new Error(`Origin ${requestOrigin} not allowed by CORS.`));
+            }
+        },
+        credentials: true
     }
-    
-} else {
-    expressServer = app.listen(PORT, () => {
-        loggingController.createLog(undefined,LogLevel.INFO,`Server is running on port ${PORT} without SSL certificate.`);
-    })
-}
+    app.use(cors(corsOptions));
 
-// Create the websocket
-const wss = new Websocket.WebSocketServer({server: expressServer, path: "/ws"});
-wss.on("connection", websocketController.onConnection);
+    app.use(express.json());
+    app.use(express.urlencoded({extended: true}));
+    app.use(cookieparser());
+    app.get("/", (req,res) => {
+        res.json({ message: "Welcome to the Secured Smart Home!"});
+    })
+
+    authRoutes(app);
+    contentRoutes(app);
+    homeRoutes(app);
+    adminRoutes(app);
+
+    let expressServer;
+
+    if (HTTPS) {
+        let keyFilePath = "../../ssl_certificate/key.pem"; // --> directory has been mounted with docker
+        let crtFilePath = "../../ssl_certificate/crt.pem";
+        let keyFileExists = fs.existsSync(path.resolve(__dirname, keyFilePath));
+        let crtFileExists = fs.existsSync(path.resolve(__dirname, crtFilePath));
+
+        if (keyFileExists && crtFileExists) {   
+            let keyFile = fs.readFileSync(path.resolve(__dirname, keyFilePath));
+            let crtFile = fs.readFileSync(path.resolve(__dirname, crtFilePath));
+
+            expressServer = https.createServer({
+                    key: keyFile,
+                    cert: crtFile
+                },app)
+            .listen(PORT, () => {
+                loggingController.createLog(undefined,LogLevel.INFO,`Server is running on port ${PORT} with SSL certificate.`);
+            })
+        } else {
+            console.error("SSL certificate not found. Make sure to place the key.pem and crt.pem in the folder ssl_certificate. If you don't want to use SSL encryption, set the environment variable HTTPS=false .")
+        }
+        
+    } else {
+        expressServer = app.listen(PORT, () => {
+            loggingController.createLog(undefined,LogLevel.INFO,`Server is running on port ${PORT} without SSL certificate.`);
+        })
+    }
+
+    // Create the websocket
+    const wss = new Websocket.WebSocketServer({server: expressServer, path: "/ws"});
+    wss.on("connection", websocketController.onConnection);
+}

@@ -63,7 +63,9 @@ const createLog = (user: string, level: LogLevel, message: string) => {
             message: message,
             user: user,
         });
-        log.save();
+        log.save().catch((e) => {
+            console.log(e);
+        });
 
         // Write to log file
         fs.writeFileSync(path.resolve(__dirname, logFilePath),logLine+"\n",{flag:"a+"});
