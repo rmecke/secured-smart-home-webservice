@@ -4,13 +4,13 @@
       "name": "Deckenlampe",
       "switch": true,
       "icon":"",
-      "datapoint": "mqtt.0.RobertsRoom.Lights.Ceiling"
+      "datapoint": "mqtt.0.my-room.light-1.switch"
     },
     "my-room-desk": {
       "name": "Schreibtischlampe",
       "switch": true,
       "icon":"",
-      "datapoint": "mqtt.0.RobertsRoom.Lights.Desk"
+      "datapoint": "mqtt.0.my-room.light-2.switch"
     },
     "my-room-data": {
       "name": "Raumdaten",

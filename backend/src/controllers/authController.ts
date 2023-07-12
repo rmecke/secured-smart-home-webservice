@@ -114,11 +114,17 @@ const login = (req: express.Request, res: express.Response) => {
 
         // create the access token
         var accessToken = jwt.sign({id: user.id}, AUTH_SECRET_ACCESS, {
+            issuer: `urn:secured-smart-home:webservice-${res.socket.localAddress}`,
+            subject: `urn:secured-smart-home:user-${req.socket.remoteAddress}`,
+            audience: `urn:secured-smart-home:webservice-${res.socket.localAddress}`,
             expiresIn: "10m" // 10 minutes
         })
 
         // create the refresh token, longer time span
         var refreshToken = jwt.sign({id: user.id}, AUTH_SECRET_REFRESH, {
+            issuer: `urn:secured-smart-home:webservice-${res.socket.localAddress}`,
+            subject: `urn:secured-smart-home:user-${req.socket.remoteAddress}`,
+            audience: `urn:secured-smart-home:webservice-${res.socket.localAddress}`,
             expiresIn: "1d" // 24 hours
         })
 
@@ -173,7 +179,10 @@ const refresh = (req: express.Request, res: express.Response) => {
 
         // create the access token
         var accessToken = jwt.sign({id: user.id}, AUTH_SECRET_ACCESS, {
-            expiresIn: "10m" // 10 minutes
+            issuer: `urn:secured-smart-home:webservice-${res.socket.localAddress}`,
+            subject: `urn:secured-smart-home:user-${req.socket.remoteAddress}`,
+            audience: `urn:secured-smart-home:webservice-${res.socket.localAddress}`,
+            expiresIn: "10m", // 10 minutes
         })
 
         // retrieve roles and send them back

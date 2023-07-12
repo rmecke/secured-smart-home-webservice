@@ -17,12 +17,20 @@ const verifyToken = (req, res, next) => {
         return;
     }
 
-    jwt.verify(token, AUTH_SECRET_ACCESS, (err, decoded) => {
+    jwt.verify(token, AUTH_SECRET_ACCESS, {
+        complete: true,
+        issuer: `urn:secured-smart-home:webservice-${res.socket.localAddress}`,
+        subject: `urn:secured-smart-home:user-${req.socket.remoteAddress}`,
+        audience: `urn:secured-smart-home:webservice-${res.socket.localAddress}`,
+    }, (err, decoded) => {
         if (err) {
             res.status(401).send({message: "Unauthorized!"});
             return;
         }
-        req.userId = decoded.id;
+
+        console.log("Decoded Access-JWT: "+JSON.stringify(decoded));
+
+        req.userId = (decoded.payload as {id:string}).id;
         next();
     });
 };
@@ -33,12 +41,20 @@ const verifyRefreshToken = (req: express.Request, res: express.Response, next: e
         const refreshToken = req.cookies.jwt;
 
         // verify the refresh token
-        jwt.verify(refreshToken, AUTH_SECRET_REFRESH, (err: jwt.VerifyErrors, decoded) => {
+        jwt.verify(refreshToken, AUTH_SECRET_REFRESH, {
+            complete: true,
+            issuer: `urn:secured-smart-home:webservice-${res.socket.localAddress}`,
+            subject: `urn:secured-smart-home:user-${req.socket.remoteAddress}`,
+            audience: `urn:secured-smart-home:webservice-${res.socket.localAddress}`,
+        }, (err, decoded) => {
             if (err) {
                 res.status(401).send({message: "Unauthorized!"});
                 return;
             }
-            req.body.userId = decoded.id;
+
+            console.log("Decoded Refresh-JWT: "+JSON.stringify(decoded));
+
+            req.body.userId = (decoded.payload as {id:string}).id;
             next();
         });
     } else {
