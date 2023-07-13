@@ -12,11 +12,42 @@
       "icon":"",
       "datapoint": "mqtt.0.my-room.light-2.switch"
     },
+    "my-room-lines": {
+      "name": "LED-Lichtleiste",
+      "switch": true,
+      "icon":"",
+      "datapoint": "nanoleaf-lightpanels.0.Lines.state",
+      "controls": {
+        "my-room-lines-brightness": {
+          "name": "Helligkeit",
+          "type": "scale",
+          "datapoint": "nanoleaf-lightpanels.0.Lines.brightness",
+          "value": 20,
+          "min": 0,
+          "max": 100,
+          "step": 10
+        }
+      }
+    },
+    "my-room-plant": {
+      "name": "Pflanzensensor",
+      "switch": true,
+      "icon":"",
+      "controls": {
+        "my-room-plant-sensor": {
+          "name": "Plant",
+          "type": "sensor",
+          "datapoint": "0_userdata.0.translator.my-room.plant.percent",
+          "value": 0,
+          "min": 0,
+          "max": 100
+        }
+      }
+    },    
     "my-room-data": {
       "name": "Raumdaten",
       "switch": true,
       "icon":"",
-      "datapoint": "mqtt.0.test.switch",
       "controls": {
         "my-room-data-temperature": {
           "name": "Temperatur",

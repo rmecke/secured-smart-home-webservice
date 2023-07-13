@@ -69,8 +69,8 @@ services:
       - AUTH_SECRET_REFRESH=secured-smart-home-refresh
       - CORS_ORIGIN=https://secured-smart-home.de:54000 # the frontend address # set to http:// if HTTPS=false
       - LOGGING_LVL=DEBUG
-      - GOTIFY_URL=https://secured-smart-home.de:54002 # the gotify address
-      - GOTIFY_TOKEN=A9LkayEzlGkBMaj # the gotify token
+      #- GOTIFY_URL=https://secured-smart-home.de:54002 # the gotify address
+      #- GOTIFY_TOKEN=A9LkayEzlGkBMaj # the gotify token
     volumes:
       - ./ssl_certificate:/ssl_certificate
       - ./logs:/logs
@@ -137,40 +137,40 @@ services:
     volumes:
       - ./logs:/logs
     restart: unless-stopped
-  gotify:
-    image: gotify/server
-    container_name: webservice-gotify
-    environment:
-      - TZ="Europe/Berlin"
-      - GOTIFY_SERVER_PORT=53003
-      - GOTIFY_SERVER_KEEPALIVEPERIODSECONDS=0
-      - GOTIFY_SERVER_LISTENADDR=
-      - GOTIFY_SERVER_SSL_ENABLED=true
-      - GOTIFY_SERVER_SSL_REDIRECTTOHTTPS=true
-      - GOTIFY_SERVER_SSL_LISTENADDR=
-      - GOTIFY_SERVER_SSL_PORT=54003
-      - GOTIFY_SERVER_SSL_CERTFILE=/ssl_certificate/crt.pem
-      - GOTIFY_SERVER_SSL_CERTKEY=/ssl_certificate/key.pem
-      - GOTIFY_SERVER_SSL_LETSENCRYPT_ENABLED=false
-      - GOTIFY_SERVER_SSL_LETSENCRYPT_ACCEPTTOS=false
-      - GOTIFY_SERVER_SSL_LETSENCRYPT_CACHE=certs
+  #gotify:
+  #  image: gotify/server
+  #  container_name: webservice-gotify
+  #  environment:
+  #    - TZ="Europe/Berlin"
+  #    - GOTIFY_SERVER_PORT=53003
+  #    - GOTIFY_SERVER_KEEPALIVEPERIODSECONDS=0
+  #    - GOTIFY_SERVER_LISTENADDR=
+  #    - GOTIFY_SERVER_SSL_ENABLED=true
+  #    - GOTIFY_SERVER_SSL_REDIRECTTOHTTPS=true
+  #    - GOTIFY_SERVER_SSL_LISTENADDR=
+  #    - GOTIFY_SERVER_SSL_PORT=54003
+  #    - GOTIFY_SERVER_SSL_CERTFILE=/ssl_certificate/crt.pem
+  #    - GOTIFY_SERVER_SSL_CERTKEY=/ssl_certificate/key.pem
+  #    - GOTIFY_SERVER_SSL_LETSENCRYPT_ENABLED=false
+  #    - GOTIFY_SERVER_SSL_LETSENCRYPT_ACCEPTTOS=false
+  #    - GOTIFY_SERVER_SSL_LETSENCRYPT_CACHE=certs
       # GOTIFY_SERVER_SSL_LETSENCRYPT_HOSTS=- mydomain.tld\n- myotherdomain.tld
       # GOTIFY_SERVER_RESPONSEHEADERS="X-Custom-Header:\"custom value\""
       # GOTIFY_SERVER_CORS_ALLOWORIGINS="- \".+.example.com\"\n- \"otherdomain.com\""
       # GOTIFY_SERVER_CORS_ALLOWMETHODS="- \"GET\"\n- \"POST\""
       # GOTIFY_SERVER_CORS_ALLOWHEADERS="- \"Authorization\"\n- \"content-type\""
       # GOTIFY_SERVER_STREAM_ALLOWEDORIGINS="- \".+.example.com\"\n- \"otherdomain.com\""
-      - GOTIFY_SERVER_STREAM_PINGPERIODSECONDS=45
-      - GOTIFY_DATABASE_DIALECT=sqlite3
-      - GOTIFY_DATABASE_CONNECTION=data/gotify.db
-      - GOTIFY_DEFAULTUSER_NAME=admin
-      - GOTIFY_DEFAULTUSER_PASS=admin
-      - GOTIFY_PASSSTRENGTH=10
-      - GOTIFY_UPLOADEDIMAGESDIR=data/images
-      - GOTIFY_PLUGINSDIR=data/plugins
-      - GOTIFY_REGISTRATION=false
-    network_mode: service:wireguard
-    volumes:
-      - ./gotify/data:/app/data
-      - ./ssl_certificate:/ssl_certificate
-    restart: unless-stopped
+  #    - GOTIFY_SERVER_STREAM_PINGPERIODSECONDS=45
+  #    - GOTIFY_DATABASE_DIALECT=sqlite3
+  #    - GOTIFY_DATABASE_CONNECTION=data/gotify.db
+  #    - GOTIFY_DEFAULTUSER_NAME=admin
+  #    - GOTIFY_DEFAULTUSER_PASS=admin
+  #    - GOTIFY_PASSSTRENGTH=10
+  #    - GOTIFY_UPLOADEDIMAGESDIR=data/images
+  #    - GOTIFY_PLUGINSDIR=data/plugins
+  #    - GOTIFY_REGISTRATION=false
+  #  network_mode: service:wireguard
+  #  volumes:
+  #    - ./gotify/data:/app/data
+  #    - ./ssl_certificate:/ssl_certificate
+  #  restart: unless-stopped

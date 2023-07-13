@@ -4,28 +4,12 @@
       "name": "LED",
       "switch": true,
       "icon":"",
-      "datapoint": "mqtt.0.test.switch",
+      "datapoint": "mqtt.0.lab.rgb-led.switch",
       "controls": {
-        "lab-led-sensor": {
-          "name": "Clap",
-          "type": "sensor",
-          "datapoint": "mqtt.0.test.clap",
-          "value": 0,
-          "min": 0,
-          "max": 4
-        },
-        "lab-plant-sensor": {
-          "name": "Plant",
-          "type": "sensor",
-          "datapoint": "0_userdata.0.translator.plant_percent",
-          "value": 0,
-          "min": 0,
-          "max": 100
-        },
         "lab-led-intensity": {
           "name": "Intensity",
           "type": "scale",
-          "datapoint": "mqtt.0.test.intensity",
+          "datapoint": "mqtt.0.lab.rgb-led.intensity",
           "value": 20,
           "min": 0,
           "max": 100,
@@ -34,7 +18,7 @@
         "lab-led-color": {
           "name": "Color",
           "type": "mode",
-          "datapoint": "mqtt.0.test.color",
+          "datapoint": "mqtt.0.lab.rgb-led.color",
           "value": "red",
           "options": {
             "red": {

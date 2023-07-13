@@ -4,41 +4,13 @@
       "name": "Mein Zimmer",
       "icon": "laptop-code"
     },
-    "stairs": {
-      "name": "Treppenhaus",
-      "icon": "door-closed"
-    },
-    "garage": {
-      "name": "Garage",
-      "icon": "flask"
-    },
     "lab": {
       "name": "The Lab",
       "icon": "flask"
     },
-    "living-room": {
-      "name": "Living Room",
-      "icon": "couch"
-    },
-    "kitchen": {
-      "name": "Kitchen",
-      "icon": "bread-slice"
-    },
-    "bedroom": {
-      "name": "Bedroom",
-      "icon": "bed"
-    },
-    "bathroom": {
-      "name": "Bathroom",
-      "icon": "bath"
-    },
-    "study-room": {
-      "name": "Study Room",
-      "icon": "book"
-    },
-    "dining-room": {
-      "name": "Dining Room",
-      "icon": "utensils"
+    "garage": {
+      "name": "Garage",
+      "icon": "flask"
     }
   }
 }

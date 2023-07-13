@@ -7,7 +7,7 @@
         "garage-motor-state": {
           "name": "Status",
           "type": "mode",
-          "datapoint": "0_userdata.0.translator.garage_motor",
+          "datapoint": "0_userdata.0.translator.garage.motor",
           "value": "red",
           "options": {
             "open": {
