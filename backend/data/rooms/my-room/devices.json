@@ -60,7 +60,7 @@
         "my-room-data-humidity": {
           "name": "Luftfeuchtigkeit",
           "type": "sensor",
-          "datapoint": "mqtt.0.my-room.room-data.humidty",
+          "datapoint": "mqtt.0.my-room.room-data.humidity",
           "value": 0,
           "min": 0,
           "max": 100
