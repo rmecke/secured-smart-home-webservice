@@ -62,7 +62,7 @@ services:
       - DB_PORT=27017
       - DB_NAME=secured_smart_home
       - DB_USERNAME=admin
-      - DB_USERPASSWORD=HighlyConfidentialPassword
+      - DB_USERPASSWORD=SecuredSmartHome23
       - AXIOS_URL=https://10.13.13.2:8087 # if using a VPN connection, the adress of the iobroker peer
       - WEBSOCKET_URL=https://10.13.13.2:8084 # if using a VPN connection, the adress of the iobroker peer
       - AUTH_SECRET_ACCESS=secured-smart-home-access
@@ -84,7 +84,7 @@ services:
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: HighlyConfidentialPassword
+      MONGO_INITDB_ROOT_PASSWORD: SecuredSmartHome23
     volumes:
       - ./database:/data/db
     depends_on:
@@ -104,8 +104,8 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Etc/UTC
-      - CUSTOM_USER=abc
-      - PASSWORD=abc
+      - CUSTOM_USER=admin
+      - PASSWORD=SecuredSmartHome23
       - CUSTOM_PORT=3002
       - CUSTOM_HTTPS_PORT=3003
     volumes:
@@ -133,6 +133,7 @@ services:
       - TSHARK_DURATION=3600
       - TSHARK_FILES=24
       - TSHARK_ETH0_FILTER=(port 51820) or (port 54000) or (port 54001)
+      - SSLKEYLOGFILE=/logs/ssl-keys.txt
     network_mode: service:wireguard
     volumes:
       - ./logs:/logs
