@@ -21,6 +21,9 @@ The additional docker configuration consists of 6 images/containers (docker-comp
 
 ## Installation
 
+### Adapt the settings inside docker compose file
+Configure the ```docker-compose.yml``` and ```docker-compose-monitoring.yml``` according to the desired setup. Also check, which optional services are necessary and, if admin-credentials are listed in the compose-file, change the credentials to secret ones. Especially have a look at the URL endpoints, they need to match the provided domain, ports and tls-status. It is highly recommended to use TLS encryption as it ensures secure communication between user and webservice.
+
 ### SSL-Certificate
 
 It is recommended to use a ssl-certificate. You can enable HTTPS within the ```docker-compose.yml```. Just set the HTTPS environment variable for frontend and backend to true, and you are good to go. Make sure to place the "key.pem" and "crt.pem" in the folder "ssl_certificate".
