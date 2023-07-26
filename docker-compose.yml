@@ -69,6 +69,7 @@ services:
       - AUTH_SECRET_REFRESH=secured-smart-home-refresh
       - CORS_ORIGIN=https://secured-smart-home.de:54000 # the frontend address # set to http:// if HTTPS=false
       - LOGGING_LVL=DEBUG
+      - LOGGING_DAYS=7
       #- GOTIFY_URL=https://secured-smart-home.de:54002 # the gotify address
       #- GOTIFY_TOKEN=A9LkayEzlGkBMaj # the gotify token
     volumes:

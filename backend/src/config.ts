@@ -43,7 +43,8 @@ export const WEBSOCKET_CONFIG = {
 // Only for development. 
 // For production please use environment variables: LOGGING_LVL
 export const LOGGIN_CONFIG = {
-    LVL: "DEBUG"
+    LVL: "DEBUG",
+    DAYS: 7
 }
 
 // Only for development. 

@@ -6,6 +6,7 @@ import { AUTH_CONFIG, LOGGIN_CONFIG } from "../config";
 import { DB } from '../models/index';
 import path from 'path';
 import { notifyController } from './notifyController';
+import findRemoveSync from 'find-remove';
 const Log = DB.Log;
 
 export enum LogLevel {
@@ -16,15 +17,25 @@ export enum LogLevel {
     "ERROR",
     "FATAL"
 };
-
+const LOGGING_DAYS = Number(process.env.LOGGING_DAYS || LOGGIN_CONFIG.DAYS);
 const LOGGING_LVL = process.env.LOGGING_LVL || LOGGIN_CONFIG.LVL;
 const minLvl = LogLevel[LOGGING_LVL];
-
-// Create a new log file
-let logDate = new Date();
 let logDirectory = "../../../logs"; // --> directory has been mounted with docker
-let logFileName = `backend_${("0"+logDate.getDate()).slice(-2)}_${("0"+logDate.getMonth()).slice(-2)}_${logDate.getFullYear()}_${("0"+logDate.getHours()).slice(-2)}_${("0"+logDate.getMinutes()).slice(-2)}_${("0"+logDate.getSeconds()).slice(-2)}`;
-let logFilePath = logDirectory+"/"+logFileName+".log";
+
+// Set up an interval to clear logs, older than x days
+setInterval(() => {
+    const res = findRemoveSync(logDirectory,{extensions: ".log", age: {seconds: 60 * 60 * 24 * LOGGING_DAYS}});
+    createLog(undefined,LogLevel.INFO,`Removed old logging files: ${JSON.stringify(res)}`);
+},1000*60*60*24);
+
+// Retrieve the log name to choose
+const getLogFilePath = () => {
+    let logDate = new Date();
+    let logFileName = `backend_${("0"+logDate.getDate()).slice(-2)}_${("0"+logDate.getMonth()).slice(-2)}_${logDate.getFullYear()}`;
+    let logFilePath = logDirectory+"/"+logFileName+".log";
+
+    return logFilePath;
+}
 
 const createLog = (user: string, level: LogLevel, message: string) => {
     const timestamp: number = Date.now()
@@ -68,7 +79,7 @@ const createLog = (user: string, level: LogLevel, message: string) => {
         });
 
         // Write to log file
-        fs.writeFileSync(path.resolve(__dirname, logFilePath),logLine+"\n",{flag:"a+"});
+        fs.writeFileSync(path.resolve(__dirname, getLogFilePath()),logLine+"\n",{flag:"a+"});
     }
 }
 
