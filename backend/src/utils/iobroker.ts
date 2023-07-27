@@ -1,7 +1,12 @@
-// Original version by GermanBluefox, Apollon77, jogibear9988
-// Published under the MIT-License
+/*
+    Based on: https://github.com/ioBroker/ioBroker.socketio/blob/master/example/conn.js
+    Original license (MIT) & copyright notice: https://github.com/ioBroker/ioBroker.socketio/blob/master/LICENSE
+    Original version by: GermanBluefox, Apollon77, jogibear9988
+    
+    Adaption for usage with "Secured Smart Home" by: Robert Mecke
 
-// Adaption for usage with Secured Smart Home by Robert Mecke
+    The content of this file is used to establish a websocket connection between webservice and smart home instance (ioBroker).
+*/
 
 import { readFileSync } from 'fs';
 import * as io from 'socket.io-client';

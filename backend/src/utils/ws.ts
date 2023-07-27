@@ -1,3 +1,10 @@
+/*
+    Based on: https://github.com/ioBroker/ioBroker.ws.client
+    Original license (MIT) & copyright notice: https://github.com/ioBroker/ioBroker.ws.client/blob/main/LICENSE
+
+    The content of this file is deprecated. See "./iobroker.ts" instead.
+*/
+
 // @ts-nocheck
 
 /*!
@@ -11,8 +18,6 @@
 /* jslint node: true */
 /* jshint -W061 */
 //'use strict';
-
-// based on: https://github.com/ioBroker/ioBroker.ws.client
 
 import { WebSocket } from 'ws';
 import { LogLevel, loggingController } from '../controllers/loggingController';

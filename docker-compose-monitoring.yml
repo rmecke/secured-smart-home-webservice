@@ -1,12 +1,12 @@
 version: '3.7'
 
-# PERFORMANCE
+# PERFORMANCE DOCS
 # https://adamtheautomator.com/grafana-docker/
 # https://pramodshehan.medium.com/containers-metrics-in-prometheus-and-grafana-389555499eb8
 # https://grafana.com/grafana/dashboards/893-main/
 # https://grafana.com/docs/grafana/latest/administration/provisioning/#dashboards
 
-# LOGGING
+# LOGGING DOCS
 # https://sbcode.net/grafana/nginx-promtail/ 
 # https://grafana.com/docs/loki/latest/clients/promtail/#:~:text=Promtail%20is%20an%20agent%20which,Discovers%20targets
 # https://grafana.com/docs/loki/latest/installation/docker/
